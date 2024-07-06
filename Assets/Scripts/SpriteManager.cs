@@ -29,7 +29,7 @@ public class SpriteManager : MonoBehaviour
         }
     }
 
-    public static Sprite getByTileID(int id)
+    public static Sprite GetTileByID(int id)
     {
         if (instance.idToTileSprite.ContainsKey(id))
             return instance.idToTileSprite[id];

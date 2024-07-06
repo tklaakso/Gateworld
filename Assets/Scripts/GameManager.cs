@@ -9,12 +9,12 @@ public class GameManager : MonoBehaviour
 
     public GameObject tilePrefab;
 
-    public static GameObject createTile(int x, int y, Tile.Type type)
+    public static GameObject CreateTile(int x, int y, Tile.Type type)
     {
         GameObject tile = Instantiate(instance.tilePrefab, new Vector2(x * Tile.WIDTH, y * Tile.HEIGHT), Quaternion.identity);
         Tile tileScript = tile.GetComponent<Tile>();
         tileScript.type = type;
-        tileScript.initialize();
+        tileScript.Initialize();
         return tile;
     }
 
