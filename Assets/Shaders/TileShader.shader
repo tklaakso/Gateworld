@@ -131,11 +131,11 @@ Shader "Custom/TileShader"
                         dist2 = min(dist2, i.uv.x + i.uv.y);
                     }
                     clip(max(radius - dist, dist2 - radius));
-                    float total = 1 + max(0, 0.5 - i.uv.x) * _NeighborExists[0] +
+                    float total = 0.5 + max(0, 0.5 - i.uv.x) * _NeighborExists[0] +
                                 max(0, i.uv.x - 0.5) * _NeighborExists[1] +
                                 max(0, i.uv.y - 0.5) * _NeighborExists[2] +
                                 max(0, 0.5 - i.uv.y) * _NeighborExists[3];
-                    return (col + leftTile * max(0, 0.5 - i.uv.x) * _NeighborExists[0] +
+                    return (0.5 * col + leftTile * max(0, 0.5 - i.uv.x) * _NeighborExists[0] +
                                 rightTile * max(0, i.uv.x - 0.5) * _NeighborExists[1] +
                                 topTile * max(0, i.uv.y - 0.5) * _NeighborExists[2] +
                                 bottomTile * max(0, 0.5 - i.uv.y) * _NeighborExists[3]) / total;

@@ -6,8 +6,8 @@ using UnityEngine;
 public class Tile : MonoBehaviour
 {
 
-    public static float WIDTH = 1.0f;
-    public static float HEIGHT = 1.0f;
+    public static readonly float WIDTH = 1.0f;
+    public static readonly float HEIGHT = 1.0f;
 
     public Type type;
 
@@ -19,13 +19,21 @@ public class Tile : MonoBehaviour
     }
 
     private SpriteRenderer spriteRenderer;
+    private BoxCollider2D boxCollider;
 
     public void Initialize()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        boxCollider = GetComponent<BoxCollider2D>();
         Sprite sprite = SpriteManager.GetTileByID((int)type);
         spriteRenderer.sprite = sprite;
+        boxCollider.size = new Vector2(sprite.bounds.size.x, sprite.bounds.size.y);
+        boxCollider.offset = new Vector2(sprite.bounds.size.x / 2, sprite.bounds.size.y / 2);
         transform.localScale = new Vector2(WIDTH / sprite.bounds.size.x, HEIGHT / sprite.bounds.size.y);
+        if (type == Type.AIR)
+        {
+            boxCollider.enabled = false;
+        }
     }
 
     public void SetNeighbors(Tile.Type?[] neighbors)
