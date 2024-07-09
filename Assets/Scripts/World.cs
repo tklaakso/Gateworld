@@ -3,20 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class World : MonoBehaviour
 {
 
-    public GameObject tilePrefab;
-
     private Dictionary<(int, int), Tile.Type> data;
     private Dictionary<(int, int), GameObject> tiles;
+
+    private Tilemap tilemap;
+
+    public UnityEngine.Tilemaps.Tile blankTile;
 
     // Start is called before the first frame update
     void Start()
     {
+        tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
         data = new Dictionary<(int, int), Tile.Type>();
         tiles = new Dictionary<(int, int), GameObject>();
+        for (int i = -20; i < 0; i++)
+            CreateTile(i, 0, Tile.Type.GRASS);
         CreateTile(0, 0, Tile.Type.GRASS);
         CreateTile(1, 1, Tile.Type.GRASS);
         CreateTile(1, 0, Tile.Type.STONE);
@@ -56,6 +62,7 @@ public class World : MonoBehaviour
         tiles.Remove((x, y));
         if (type != Tile.Type.AIR)
         {
+            tilemap.SetTile(new Vector3Int(x, y), null);
             (int, int)[] neighbors = GetNeighbors(x, y);
             bool isolated = true;
             for (int i = 0; i < neighbors.Length; i++)
@@ -109,6 +116,7 @@ public class World : MonoBehaviour
         (int, int)[] neighbors = GetNeighbors(x, y);
         if (type != Tile.Type.AIR)
         {
+            tilemap.SetTile(new Vector3Int(x, y), blankTile);
             for (int i = 0; i < neighbors.Length; i++)
             {
                 if (!tiles.ContainsKey(neighbors[i]))

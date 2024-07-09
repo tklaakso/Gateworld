@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
 
     public float speed;
     public float jumpHeight;
+    public float groundMovementStrength;
+    public float airMovementStrength;
 
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D boxCollider;
@@ -21,8 +23,7 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private bool grounded;
-
-    private Rigidbody2D lastCollisionBody;
+    private bool jumpActive;
 
     // Start is called before the first frame update
     void Start()
@@ -39,40 +40,73 @@ public class Player : MonoBehaviour
     void Update()
     {
         horizontalMovement = Input.GetAxisRaw("Horizontal");
-        rigidbody.velocity = new Vector2(horizontalMovement * speed, rigidbody.velocity.y);
+        float movementStrength = grounded ? groundMovementStrength : airMovementStrength;
+        if (Math.Abs(horizontalMovement) > 0)
+        {
+            rigidbody.AddForce(new Vector2(horizontalMovement * movementStrength, 0));
+        }
+        else
+        {
+            if (rigidbody.velocity.x < 0)
+            {
+                rigidbody.AddForce(new Vector2(Math.Min(-rigidbody.velocity.x, movementStrength), 0));
+            }
+            else
+            {
+                rigidbody.AddForce(new Vector2(Math.Max(-rigidbody.velocity.x, -movementStrength), 0));
+            }
+        }
+        rigidbody.velocity = new Vector2(Math.Clamp(rigidbody.velocity.x, -speed, speed), rigidbody.velocity.y);
 
         if (Input.GetButtonDown("Jump") && grounded)
         {
             rigidbody.AddForce(new Vector2(rigidbody.velocity.x, jumpHeight * 10));
+            jumpActive = true;
+        }
+
+        if (Input.GetButtonUp("Jump") && jumpActive)
+        {
+            if (!grounded && rigidbody.velocity.y > 0)
+                rigidbody.AddForce(new Vector2(0, -jumpHeight * rigidbody.velocity.y));
+            jumpActive = false;
         }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.GetComponent<Tile>())
+        if (collision.gameObject.CompareTag("Tilemap"))
         {
-            if (Vector2.Dot(collision.GetContact(0).normal, Vector2.up) > 0.9)
+            grounded = false;
+            foreach (ContactPoint2D contact in collision.contacts)
             {
-                lastCollisionBody = collision.rigidbody;
-                grounded = true;
+                if (Vector2.Dot(contact.normal, Vector2.up) > 0.9)
+                {
+                    grounded = true;
+                    break;
+                }
             }
         }
     }
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.GetComponent<Tile>())
+        if (collision.gameObject.CompareTag("Tilemap"))
         {
-            if (Vector2.Dot(collision.GetContact(0).normal, Vector2.up) > 0.9)
+            grounded = false;
+            foreach (ContactPoint2D contact in collision.contacts)
             {
-                lastCollisionBody = collision.rigidbody;
+                if (Vector2.Dot(contact.normal, Vector2.up) > 0.9)
+                {
+                    grounded = true;
+                    break;
+                }
             }
         }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.GetComponent<Tile>() && collision.rigidbody.Equals(lastCollisionBody))
+        if (collision.gameObject.CompareTag("Tilemap"))
         {
             grounded = false;
         }
