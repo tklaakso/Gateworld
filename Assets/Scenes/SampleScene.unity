@@ -487,13 +487,9 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 159955856210277496, guid: 2af546ffcbd1a3b4c98a738380361568, type: 3}
-      propertyPath: airMovementStrength
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 159955856210277496, guid: 2af546ffcbd1a3b4c98a738380361568, type: 3}
-      propertyPath: groundMovementStrength
-      value: 3
-      objectReference: {fileID: 0}
+      propertyPath: mainCamera
+      value: 
+      objectReference: {fileID: 519420028}
     - target: {fileID: 6266762166624505003, guid: 2af546ffcbd1a3b4c98a738380361568, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

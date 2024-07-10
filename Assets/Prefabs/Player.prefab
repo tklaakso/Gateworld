@@ -100,7 +100,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  jumpHeight: 30
+  jumpHeight: 40
+  groundMovementStrength: 0.06
+  airMovementStrength: 0.005
+  zoomDecay: 0.99
+  zoomStrength: 0.01
+  zoomEdgeSmoothing: 100
+  minZoom: 1
+  maxZoom: 30
+  mainCamera: {fileID: 0}
   grounded: 0
 --- !u!50 &7462174270837371667
 Rigidbody2D:

@@ -21,13 +21,14 @@ public class World : MonoBehaviour
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
         data = new Dictionary<(int, int), Tile.Type>();
         tiles = new Dictionary<(int, int), GameObject>();
-        for (int i = -20; i < 0; i++)
-            CreateTile(i, 0, Tile.Type.GRASS);
-        CreateTile(0, 0, Tile.Type.GRASS);
-        CreateTile(1, 1, Tile.Type.GRASS);
-        CreateTile(1, 0, Tile.Type.STONE);
-        CreateTile(2, 0, Tile.Type.STONE);
-        CreateTile(1, -1, Tile.Type.STONE);
+        for (int i = -5; i < 5; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                if (UnityEngine.Random.Range(0, 2) > 0)
+                    CreateTile(i, -j, UnityEngine.Random.Range(0, 2) > 0 ? Tile.Type.GRASS : Tile.Type.STONE);
+            }
+        }
     }
 
     private (int, int)[] GetNeighbors(int x, int y)

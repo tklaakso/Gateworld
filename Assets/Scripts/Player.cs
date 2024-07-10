@@ -2,18 +2,27 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
 
-    public static readonly float WIDTH = 1.0f;
-    public static readonly float HEIGHT = 1.0f;
+    public static readonly float WIDTH = 0.5f;
+    public static readonly float HEIGHT = 0.5f;
 
     public float speed;
     public float jumpHeight;
     public float groundMovementStrength;
     public float airMovementStrength;
+    public float zoomDecay;
+    public float zoomStrength;
+    public float zoomEdgeSmoothing;
+    public float minZoom;
+    public float maxZoom;
+    public GameObject mainCamera;
+
+    private Camera camera;
 
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D boxCollider;
@@ -25,12 +34,16 @@ public class Player : MonoBehaviour
     private bool grounded;
     private bool jumpActive;
 
+    private float zoomVelocity;
+    private float zoom = 5;
+
     // Start is called before the first frame update
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
         rigidbody = GetComponent<Rigidbody2D>();
+        camera = mainCamera.GetComponent<Camera>();
         Sprite sprite = spriteRenderer.sprite;
         transform.localScale = new Vector2(WIDTH / sprite.bounds.size.x, HEIGHT / sprite.bounds.size.y);
         boxCollider.size = new Vector2(sprite.bounds.size.x, sprite.bounds.size.y);
@@ -39,21 +52,24 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        mainCamera.transform.position = new Vector3(transform.position.x, transform.position.y, -10);
+        zoom = Math.Clamp(zoom, minZoom, maxZoom);
+        camera.orthographicSize = zoom;
         horizontalMovement = Input.GetAxisRaw("Horizontal");
-        float movementStrength = grounded ? groundMovementStrength : airMovementStrength;
+        float movementStrength = (grounded ? groundMovementStrength : airMovementStrength) * Time.deltaTime * 1000;
         if (Math.Abs(horizontalMovement) > 0)
         {
-            rigidbody.AddForce(new Vector2(horizontalMovement * movementStrength, 0));
+            rigidbody.velocity += new Vector2(horizontalMovement * movementStrength, 0);
         }
         else
         {
             if (rigidbody.velocity.x < 0)
             {
-                rigidbody.AddForce(new Vector2(Math.Min(-rigidbody.velocity.x, movementStrength), 0));
+                rigidbody.velocity += new Vector2(Math.Min(-rigidbody.velocity.x, movementStrength), 0);
             }
             else
             {
-                rigidbody.AddForce(new Vector2(Math.Max(-rigidbody.velocity.x, -movementStrength), 0));
+                rigidbody.velocity += new Vector2(Math.Max(-rigidbody.velocity.x, -movementStrength), 0);
             }
         }
         rigidbody.velocity = new Vector2(Math.Clamp(rigidbody.velocity.x, -speed, speed), rigidbody.velocity.y);
@@ -70,6 +86,18 @@ public class Player : MonoBehaviour
                 rigidbody.AddForce(new Vector2(0, -jumpHeight * rigidbody.velocity.y));
             jumpActive = false;
         }
+
+        zoomVelocity += -Input.mouseScrollDelta.y * zoomStrength * Mathf.Lerp(0.5f, 1, (zoom - minZoom) / (maxZoom - minZoom));
+        zoomVelocity *= zoomDecay;
+        if (zoomVelocity < 0 && zoom - minZoom <= -zoomVelocity * zoomEdgeSmoothing)
+        {
+            zoomVelocity = -(zoom - minZoom) / zoomEdgeSmoothing;
+        }
+        if (zoomVelocity > 0 && maxZoom - zoom <= zoomVelocity * zoomEdgeSmoothing)
+        {
+            zoomVelocity = (maxZoom - zoom) / zoomEdgeSmoothing;
+        }
+        zoom += zoomVelocity;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
