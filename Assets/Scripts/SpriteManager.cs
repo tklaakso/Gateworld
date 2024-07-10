@@ -14,18 +14,10 @@ public class SpriteManager : MonoBehaviour
     private void LoadTileSprites()
     {
         idToTileSprite = new Dictionary<int, Sprite>();
-        Sprite[] tiles = Resources.LoadAll<Sprite>("Tile");
+        Sprite[] tiles = Resources.LoadAll<Sprite>("Sprites/tiles");
         for (int i = 0; i < tiles.Length; i++)
         {
-            try
-            {
-                int id = int.Parse(tiles[i].name);
-                idToTileSprite[id] = tiles[i];
-            }
-            catch
-            {
-                Debug.LogError("Unable to read id from tile with name: " + tiles[i].name);
-            }
+            idToTileSprite[i] = tiles[i];
         }
     }
 

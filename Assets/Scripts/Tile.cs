@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.U2D;
 
 public class Tile : MonoBehaviour
 {
@@ -31,25 +32,40 @@ public class Tile : MonoBehaviour
     public void SetNeighbors(Tile.Type?[] neighbors)
     {
         Material mat = spriteRenderer.material;
-        Texture[] neighborTextures = new Texture[neighbors.Length];
+        List<float[]> neighborCoords = new List<float[]>();
         float[] neighborExists = new float[neighbors.Length];
         for (int i = 0; i < neighbors.Length; i++)
         {
+            
             if (neighbors[i] != null)
             {
-                neighborTextures[i] = SpriteManager.GetTileByID((int)neighbors[i]).texture;
+                Sprite sprite = SpriteManager.GetTileByID((int)neighbors[i]);
+                Texture texture = sprite.texture;
+                neighborCoords.Add(new float[] {sprite.rect.x / texture.width,
+                                                sprite.rect.y / texture.width,
+                                                sprite.rect.width / texture.width,
+                                                sprite.rect.height / texture.width});
                 neighborExists[i] = 1.0f;
             }
             else
             {
-                neighborTextures[i] = null;
+                neighborCoords.Add(new float[] { 0, 0, 0, 0 });
                 neighborExists[i] = 0.0f;
             }
         }
-        mat.SetTexture("_LeftTex", neighborTextures[0]);
-        mat.SetTexture("_RightTex", neighborTextures[1]);
-        mat.SetTexture("_TopTex", neighborTextures[2]);
-        mat.SetTexture("_BottomTex", neighborTextures[3]);
+        Sprite mainSprite = SpriteManager.GetTileByID((int)type);
+        Texture mainTexture = mainSprite.texture;
+        mat.SetFloatArray("_MainCoords", new float[]
+        {
+            mainSprite.rect.x / mainTexture.width,
+            mainSprite.rect.y / mainTexture.width,
+            mainSprite.rect.width / mainTexture.width,
+            mainSprite.rect.height / mainTexture.width
+        });
+        mat.SetFloatArray("_LeftCoords", neighborCoords[0]);
+        mat.SetFloatArray("_RightCoords", neighborCoords[1]);
+        mat.SetFloatArray("_TopCoords", neighborCoords[2]);
+        mat.SetFloatArray("_BottomCoords", neighborCoords[3]);
         mat.SetFloatArray("_NeighborExists", neighborExists);
         mat.SetFloat("_IsAirTile", type == Type.AIR ? 1.0f : 0.0f);
     }

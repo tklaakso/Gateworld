@@ -3,10 +3,6 @@ Shader "Custom/TileShader"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _LeftTex ("Texture", 2D) = "white" {}
-        _RightTex ("Texture", 2D) = "white" {}
-        _TopTex ("Texture", 2D) = "white" {}
-        _BottomTex ("Texture", 2D) = "white" {}
         _TileSize ("Tile Size", Vector) = (1, 1, 0)
     }
     SubShader
@@ -43,10 +39,11 @@ Shader "Custom/TileShader"
             }
 
             sampler2D _MainTex;
-            sampler2D _LeftTex;
-            sampler2D _RightTex;
-            sampler2D _TopTex;
-            sampler2D _BottomTex;
+            float _MainCoords[4];
+            float _LeftCoords[4];
+            float _RightCoords[4];
+            float _TopCoords[4];
+            float _BottomCoords[4];
             float _NeighborExists[4];
             float _IsAirTile;
             float2 _TileSize;
@@ -56,11 +53,20 @@ Shader "Custom/TileShader"
                 float radius = 0.3;
                 float dist = 1;
                 float dist2 = 1;
-                fixed4 col = tex2D(_MainTex, i.uv);
-                fixed4 leftTile = tex2D(_LeftTex, float2(1 - i.uv.x, i.uv.y));
-                fixed4 rightTile = tex2D(_RightTex, float2(1 - i.uv.x, i.uv.y));
-                fixed4 topTile = tex2D(_TopTex, float2(i.uv.x, 1 - i.uv.y));
-                fixed4 bottomTile = tex2D(_BottomTex, float2(i.uv.x, 1 - i.uv.y));
+                i.uv.x = (i.uv.x - _MainCoords[0]) / _MainCoords[2];
+                i.uv.y = (i.uv.y - _MainCoords[1]) / _MainCoords[3];
+                float2 uvInvX = float2(1 - i.uv.x, i.uv.y);
+                float2 uvInvY = float2(i.uv.x, 1 - i.uv.y);
+                float2 uvMain = float2(lerp(_MainCoords[0], _MainCoords[0] + _MainCoords[2], i.uv.x), lerp(_MainCoords[1], _MainCoords[1] + _MainCoords[3], i.uv.y));
+                float2 uvLeft = float2(lerp(_LeftCoords[0], _LeftCoords[0] + _LeftCoords[2], uvInvX.x), lerp(_LeftCoords[1], _LeftCoords[1] + _LeftCoords[3], uvInvX.y));
+                float2 uvRight = float2(lerp(_RightCoords[0], _RightCoords[0] + _RightCoords[2], uvInvX.x), lerp(_RightCoords[1], _RightCoords[1] + _RightCoords[3], uvInvX.y));
+                float2 uvTop = float2(lerp(_TopCoords[0], _TopCoords[0] + _TopCoords[2], uvInvY.x), lerp(_TopCoords[1], _TopCoords[1] + _TopCoords[3], uvInvY.y));
+                float2 uvBottom = float2(lerp(_BottomCoords[0], _BottomCoords[0] + _BottomCoords[2], uvInvY.x), lerp(_BottomCoords[1], _BottomCoords[1] + _BottomCoords[3], uvInvY.y));
+                fixed4 mainTile = tex2D(_MainTex, uvMain);
+                fixed4 leftTile = tex2D(_MainTex, uvLeft);
+                fixed4 rightTile = tex2D(_MainTex, uvRight);
+                fixed4 topTile = tex2D(_MainTex, uvTop);
+                fixed4 bottomTile = tex2D(_MainTex, uvBottom);
                 if (_IsAirTile) {
                     fixed4 tile1;
                     fixed4 tile2;
@@ -135,7 +141,7 @@ Shader "Custom/TileShader"
                                 max(0, i.uv.x - 0.5) * _NeighborExists[1] +
                                 max(0, i.uv.y - 0.5) * _NeighborExists[2] +
                                 max(0, 0.5 - i.uv.y) * _NeighborExists[3];
-                    return (0.5 * col + leftTile * max(0, 0.5 - i.uv.x) * _NeighborExists[0] +
+                    return (0.5 * mainTile + leftTile * max(0, 0.5 - i.uv.x) * _NeighborExists[0] +
                                 rightTile * max(0, i.uv.x - 0.5) * _NeighborExists[1] +
                                 topTile * max(0, i.uv.y - 0.5) * _NeighborExists[2] +
                                 bottomTile * max(0, 0.5 - i.uv.y) * _NeighborExists[3]) / total;
