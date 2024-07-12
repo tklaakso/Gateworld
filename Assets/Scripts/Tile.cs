@@ -69,16 +69,4 @@ public class Tile : MonoBehaviour
         mat.SetFloatArray("_NeighborExists", neighborExists);
         mat.SetFloat("_IsAirTile", type == Type.AIR ? 1.0f : 0.0f);
     }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

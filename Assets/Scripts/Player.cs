@@ -21,6 +21,9 @@ public class Player : MonoBehaviour
     public float minZoom;
     public float maxZoom;
     public GameObject mainCamera;
+    public GameObject game;
+
+    private InventoryManager inventory;
 
     private Camera camera;
 
@@ -44,6 +47,7 @@ public class Player : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         rigidbody = GetComponent<Rigidbody2D>();
         camera = mainCamera.GetComponent<Camera>();
+        inventory = game.GetComponent<InventoryManager>();
         Sprite sprite = spriteRenderer.sprite;
         transform.localScale = new Vector2(WIDTH / sprite.bounds.size.x, HEIGHT / sprite.bounds.size.y);
         boxCollider.size = new Vector2(sprite.bounds.size.x, sprite.bounds.size.y);
@@ -52,10 +56,11 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        bool inventoryOpen = inventory.IsOpen();
         mainCamera.transform.position = new Vector3(transform.position.x, transform.position.y, -10);
         zoom = Math.Clamp(zoom, minZoom, maxZoom);
         camera.orthographicSize = zoom;
-        horizontalMovement = Input.GetAxisRaw("Horizontal");
+        horizontalMovement = inventoryOpen ? 0 : Input.GetAxisRaw("Horizontal");
         float movementStrength = (grounded ? groundMovementStrength : airMovementStrength) * Time.deltaTime * 1000;
         if (Math.Abs(horizontalMovement) > 0)
         {
@@ -74,20 +79,21 @@ public class Player : MonoBehaviour
         }
         rigidbody.velocity = new Vector2(Math.Clamp(rigidbody.velocity.x, -speed, speed), rigidbody.velocity.y);
 
-        if (Input.GetButtonDown("Jump") && grounded)
+        if (Input.GetButtonDown("Jump") && grounded && !inventoryOpen)
         {
             rigidbody.AddForce(new Vector2(rigidbody.velocity.x, jumpHeight * 10));
             jumpActive = true;
         }
 
-        if (Input.GetButtonUp("Jump") && jumpActive)
+        if (Input.GetButtonUp("Jump") && jumpActive && !inventoryOpen)
         {
             if (!grounded && rigidbody.velocity.y > 0)
                 rigidbody.AddForce(new Vector2(0, -jumpHeight * rigidbody.velocity.y));
             jumpActive = false;
         }
 
-        zoomVelocity += -Input.mouseScrollDelta.y * zoomStrength * Mathf.Lerp(0.5f, 1, (zoom - minZoom) / (maxZoom - minZoom));
+        if (!inventoryOpen)
+            zoomVelocity += -Input.mouseScrollDelta.y * zoomStrength * Mathf.Lerp(0.5f, 1, (zoom - minZoom) / (maxZoom - minZoom));
         zoomVelocity *= zoomDecay;
         if (zoomVelocity < 0 && zoom - minZoom <= -zoomVelocity * zoomEdgeSmoothing)
         {
