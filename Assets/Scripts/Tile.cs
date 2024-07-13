@@ -29,7 +29,7 @@ public class Tile : MonoBehaviour
         transform.localScale = new Vector2(WIDTH / sprite.bounds.size.x, HEIGHT / sprite.bounds.size.y);
     }
 
-    public void SetNeighbors(Tile.Type?[] neighbors)
+    public void SetNeighbors(Type?[] neighbors)
     {
         Material mat = spriteRenderer.material;
         List<float[]> neighborCoords = new List<float[]>();

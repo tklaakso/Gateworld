@@ -42,6 +42,27 @@ public class World : MonoBehaviour
         return neighbors;
     }
 
+    private (int, int)[] GetCornerNeighbors(int x, int y)
+    {
+        (int, int)[] neighbors = {
+            (x - 1, y - 1),
+            (x + 1, y - 1),
+            (x + 1, y + 1),
+            (x - 1,  y + 1),
+        };
+        return neighbors;
+    }
+
+    private (int, int)[] GetAllNeighbors(int x, int y)
+    {
+        (int, int)[] immediateNeighbors = GetNeighbors(x, y);
+        (int, int)[] cornerNeighbors = GetCornerNeighbors(x, y);
+        (int, int)[] neighbors = new (int, int)[immediateNeighbors.Length + cornerNeighbors.Length];
+        immediateNeighbors.CopyTo(neighbors, 0);
+        cornerNeighbors.CopyTo(neighbors, immediateNeighbors.Length);
+        return neighbors;
+    }
+
     private void RemoveIfIsolated(int x, int y)
     {
         (int, int)[] neighbors = GetNeighbors(x, y);
@@ -65,6 +86,7 @@ public class World : MonoBehaviour
         {
             tilemap.SetTile(new Vector3Int(x, y), null);
             (int, int)[] neighbors = GetNeighbors(x, y);
+            (int, int)[] cornerNeighbors = GetCornerNeighbors(x, y);
             bool isolated = true;
             for (int i = 0; i < neighbors.Length; i++)
             {
@@ -90,6 +112,13 @@ public class World : MonoBehaviour
                         UpdateNeighbors(neighbors[i].Item1, neighbors[i].Item2);
                     }
                 }
+                for (int i = 0; i < cornerNeighbors.Length; i++)
+                {
+                    if (data.ContainsKey(cornerNeighbors[i]) && data[cornerNeighbors[i]] != Tile.Type.AIR)
+                    {
+                        UpdateNeighbors(cornerNeighbors[i].Item1, cornerNeighbors[i].Item2);
+                    }
+                }
             }
         }
     }
@@ -98,7 +127,7 @@ public class World : MonoBehaviour
     {
         if (!tiles.ContainsKey((x, y)))
             return;
-        (int, int)[] neighbors = GetNeighbors(x, y);
+        (int, int)[] neighbors = GetAllNeighbors(x, y);
         GameObject tile = tiles[(x, y)];
         Tile tileScript = tile.GetComponent<Tile>();
         tileScript.SetNeighbors(neighbors.Select(x => data.TryGetValue(x, out var value) && value != Tile.Type.AIR ? (Tile.Type?)value : null).ToArray());
@@ -115,6 +144,7 @@ public class World : MonoBehaviour
         tiles[(x, y)] = tile;
         Tile tileScript = tile.GetComponent<Tile>();
         (int, int)[] neighbors = GetNeighbors(x, y);
+        (int, int)[] cornerNeighbors = GetCornerNeighbors(x, y);
         if (type != Tile.Type.AIR)
         {
             tilemap.SetTile(new Vector3Int(x, y), blankTile);
@@ -127,6 +157,13 @@ public class World : MonoBehaviour
                 else
                 {
                     UpdateNeighbors(neighbors[i].Item1, neighbors[i].Item2);
+                }
+            }
+            for (int i = 0; i < cornerNeighbors.Length; i++)
+            {
+                if (tiles.ContainsKey(cornerNeighbors[i]))
+                {
+                    UpdateNeighbors(cornerNeighbors[i].Item1, cornerNeighbors[i].Item2);
                 }
             }
         }

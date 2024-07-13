@@ -44,7 +44,7 @@ Shader "Custom/TileShader"
             float _RightCoords[4];
             float _TopCoords[4];
             float _BottomCoords[4];
-            float _NeighborExists[4];
+            float _NeighborExists[8];
             float _IsAirTile;
             float2 _TileSize;
 
@@ -120,19 +120,19 @@ Shader "Custom/TileShader"
                     return (tile1 * dt2 + tile2 * dt1) / (dt1 + dt2);
                 }
                 else {
-                    if (_NeighborExists[0] < 1 && _NeighborExists[2] < 1) {
+                    if (_NeighborExists[0] < 1 && _NeighborExists[2] < 1 && _NeighborExists[7] < 1) {
                         dist = min(dist, length(float2(i.uv.x - radius, i.uv.y - 1 + radius)));
                         dist2 = min(dist2, i.uv.x + 1 - i.uv.y);
                     }
-                    if (_NeighborExists[2] < 1 && _NeighborExists[1] < 1) {
+                    if (_NeighborExists[2] < 1 && _NeighborExists[1] < 1 && _NeighborExists[6] < 1) {
                         dist = min(dist, length(float2(i.uv.x - 1 + radius, i.uv.y - 1 + radius)));
                         dist2 = min(dist2, 1 - i.uv.x + 1 - i.uv.y);
                     }
-                    if (_NeighborExists[1] < 1 && _NeighborExists[3] < 1) {
+                    if (_NeighborExists[1] < 1 && _NeighborExists[3] < 1 && _NeighborExists[5] < 1) {
                         dist = min(dist, length(float2(i.uv.x - 1 + radius, i.uv.y - radius)));
                         dist2 = min(dist2, 1 - i.uv.x + i.uv.y);
                     }
-                    if (_NeighborExists[3] < 1 && _NeighborExists[0] < 1) {
+                    if (_NeighborExists[3] < 1 && _NeighborExists[0] < 1 && _NeighborExists[4] < 1) {
                         dist = min(dist, length(float2(i.uv.x - radius, i.uv.y - radius)));
                         dist2 = min(dist2, i.uv.x + i.uv.y);
                     }
