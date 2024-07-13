@@ -2127,6 +2127,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: InventorySlot
       objectReference: {fileID: 0}
+    - target: {fileID: 6200947995493477220, guid: fdfb6c90093617e49a841aad07f382a5, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3617,6 +3621,11 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1876048300676804901, guid: fdfb6c90093617e49a841aad07f382a5, type: 3}
   m_PrefabInstance: {fileID: 1508136036}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1546818690 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8955826657040013327, guid: 2af546ffcbd1a3b4c98a738380361568, type: 3}
+  m_PrefabInstance: {fileID: 5080727537340973441}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1557504785
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4756,6 +4765,10 @@ PrefabInstance:
       propertyPath: main
       value: 
       objectReference: {fileID: 1292733979}
+    - target: {fileID: 4046190513056982590, guid: 4e50d84155a6a4741a0c9c5f49c3e8d8, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1546818690}
     - target: {fileID: 4046190513056982590, guid: 4e50d84155a6a4741a0c9c5f49c3e8d8, type: 3}
       propertyPath: overlay
       value: 

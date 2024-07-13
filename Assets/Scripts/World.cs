@@ -15,9 +15,12 @@ public class World : MonoBehaviour
 
     public UnityEngine.Tilemaps.Tile blankTile;
 
+    private static World instance;
+
     // Start is called before the first frame update
     void Start()
     {
+        instance = this;
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
         data = new Dictionary<(int, int), Tile.Type>();
         tiles = new Dictionary<(int, int), GameObject>();
@@ -31,7 +34,7 @@ public class World : MonoBehaviour
         }
     }
 
-    private (int, int)[] GetNeighbors(int x, int y)
+    public static (int, int)[] GetNeighbors(int x, int y)
     {
         (int, int)[] neighbors = {
             (x - 1, y),
@@ -42,7 +45,7 @@ public class World : MonoBehaviour
         return neighbors;
     }
 
-    private (int, int)[] GetCornerNeighbors(int x, int y)
+    public static (int, int)[] GetCornerNeighbors(int x, int y)
     {
         (int, int)[] neighbors = {
             (x - 1, y - 1),
@@ -53,7 +56,7 @@ public class World : MonoBehaviour
         return neighbors;
     }
 
-    private (int, int)[] GetAllNeighbors(int x, int y)
+    public static (int, int)[] GetAllNeighbors(int x, int y)
     {
         (int, int)[] immediateNeighbors = GetNeighbors(x, y);
         (int, int)[] cornerNeighbors = GetCornerNeighbors(x, y);
@@ -76,25 +79,25 @@ public class World : MonoBehaviour
         RemoveTile(x, y);
     }
 
-    public void RemoveTile(int x, int y)
+    public static void RemoveTile(int x, int y)
     {
-        Tile.Type type = data[(x, y)];
-        data.Remove((x, y));
-        Destroy(tiles[(x, y)]);
-        tiles.Remove((x, y));
+        Tile.Type type = instance.data[(x, y)];
+        instance.data.Remove((x, y));
+        Destroy(instance.tiles[(x, y)]);
+        instance.tiles.Remove((x, y));
         if (type != Tile.Type.AIR)
         {
-            tilemap.SetTile(new Vector3Int(x, y), null);
+            instance.tilemap.SetTile(new Vector3Int(x, y), null);
             (int, int)[] neighbors = GetNeighbors(x, y);
             (int, int)[] cornerNeighbors = GetCornerNeighbors(x, y);
             bool isolated = true;
             for (int i = 0; i < neighbors.Length; i++)
             {
-                if (data.ContainsKey(neighbors[i]))
+                if (instance.data.ContainsKey(neighbors[i]))
                 {
-                    if (data[neighbors[i]] == Tile.Type.AIR)
+                    if (instance.data[neighbors[i]] == Tile.Type.AIR)
                     {
-                        RemoveIfIsolated(x, y);
+                        instance.RemoveIfIsolated(x, y);
                     }
                     else
                     {
@@ -107,16 +110,16 @@ public class World : MonoBehaviour
                 CreateTile(x, y, Tile.Type.AIR);
                 for (int i = 0; i < neighbors.Length; i++)
                 {
-                    if (data.ContainsKey(neighbors[i]) && data[neighbors[i]] != Tile.Type.AIR)
+                    if (instance.data.ContainsKey(neighbors[i]) && instance.data[neighbors[i]] != Tile.Type.AIR)
                     {
-                        UpdateNeighbors(neighbors[i].Item1, neighbors[i].Item2);
+                        instance.UpdateNeighbors(neighbors[i].Item1, neighbors[i].Item2);
                     }
                 }
                 for (int i = 0; i < cornerNeighbors.Length; i++)
                 {
-                    if (data.ContainsKey(cornerNeighbors[i]) && data[cornerNeighbors[i]] != Tile.Type.AIR)
+                    if (instance.data.ContainsKey(cornerNeighbors[i]) && instance.data[cornerNeighbors[i]] != Tile.Type.AIR)
                     {
-                        UpdateNeighbors(cornerNeighbors[i].Item1, cornerNeighbors[i].Item2);
+                        instance.UpdateNeighbors(cornerNeighbors[i].Item1, cornerNeighbors[i].Item2);
                     }
                 }
             }
@@ -133,41 +136,46 @@ public class World : MonoBehaviour
         tileScript.SetNeighbors(neighbors.Select(x => data.TryGetValue(x, out var value) && value != Tile.Type.AIR ? (Tile.Type?)value : null).ToArray());
     }
 
-    public void CreateTile(int x, int y, Tile.Type type)
+    public static void CreateTile(int x, int y, Tile.Type type)
     {
-        if (tiles.ContainsKey((x, y)))
+        if (instance.tiles.ContainsKey((x, y)))
         {
             RemoveTile(x, y);
         }
-        data[(x, y)] = type;
+        instance.data[(x, y)] = type;
         GameObject tile = GameManager.CreateTile(x, y, type);
-        tiles[(x, y)] = tile;
+        instance.tiles[(x, y)] = tile;
         Tile tileScript = tile.GetComponent<Tile>();
         (int, int)[] neighbors = GetNeighbors(x, y);
         (int, int)[] cornerNeighbors = GetCornerNeighbors(x, y);
         if (type != Tile.Type.AIR)
         {
-            tilemap.SetTile(new Vector3Int(x, y), blankTile);
+            instance.tilemap.SetTile(new Vector3Int(x, y), instance.blankTile);
             for (int i = 0; i < neighbors.Length; i++)
             {
-                if (!tiles.ContainsKey(neighbors[i]))
+                if (!instance.tiles.ContainsKey(neighbors[i]))
                 {
                     CreateTile(neighbors[i].Item1, neighbors[i].Item2, Tile.Type.AIR);
                 }
                 else
                 {
-                    UpdateNeighbors(neighbors[i].Item1, neighbors[i].Item2);
+                    instance.UpdateNeighbors(neighbors[i].Item1, neighbors[i].Item2);
                 }
             }
             for (int i = 0; i < cornerNeighbors.Length; i++)
             {
-                if (tiles.ContainsKey(cornerNeighbors[i]))
+                if (instance.tiles.ContainsKey(cornerNeighbors[i]))
                 {
-                    UpdateNeighbors(cornerNeighbors[i].Item1, cornerNeighbors[i].Item2);
+                    instance.UpdateNeighbors(cornerNeighbors[i].Item1, cornerNeighbors[i].Item2);
                 }
             }
         }
-        UpdateNeighbors(x, y);
+        instance.UpdateNeighbors(x, y);
+    }
+
+    public static Vector3Int GetTilePosition(Vector3 mousePos)
+    {
+        return instance.tilemap.WorldToCell(Camera.main.ScreenToWorldPoint(mousePos));
     }
 
     // Update is called once per frame

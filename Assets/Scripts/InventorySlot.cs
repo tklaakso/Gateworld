@@ -17,10 +17,13 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
 
     public GameObject draggableItem;
 
+    private List<IInventorySlotUpdateListener> inventorySlotUpdateListeners;
+
     // Start is called before the first frame update
     void Awake()
     {
-        item = new Item(Item.Type.NONE);
+        inventorySlotUpdateListeners = new List<IInventorySlotUpdateListener>();
+        item = Item.Create(Item.Type.NONE);
         inventoryItem = transform.Find("InventoryItem").gameObject;
         itemCount = transform.Find("ItemCount").gameObject;
         itemImage = inventoryItem.GetComponent<Image>();
@@ -33,6 +36,16 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
         
     }
 
+    public void AddInventorySlotUpdateListener(IInventorySlotUpdateListener listener)
+    {
+        inventorySlotUpdateListeners.Add(listener);
+    }
+
+    public void RemoveInventorySlotUpdateListener(IInventorySlotUpdateListener listener)
+    {
+        inventorySlotUpdateListeners.Remove(listener);
+    }
+
     public Item GetItem()
     {
         return item;
@@ -42,13 +55,17 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
     {
         if (item == null)
         {
-            this.item = new Item(Item.Type.NONE);
+            this.item = Item.Create(Item.Type.NONE);
         }
         else
         {
             this.item = item;
         }
         UpdateItemImage();
+        foreach (var listener in inventorySlotUpdateListeners)
+        {
+            listener.OnInventorySlotUpdate(this);
+        }
     }
 
     private void UpdateItemImage()
@@ -110,10 +127,10 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
                 else if (type == item.type)
                 {
                     int total = slot.GetItem().quantity + item.quantity;
-                    slot.SetItem(new Item(type, Mathf.Min(total, Item.MAX_STACK)));
+                    slot.SetItem(Item.Create(type, Mathf.Min(total, Item.MAX_STACK)));
                     if (total > Item.MAX_STACK)
                     {
-                        SetItem(new Item(type, total - Item.MAX_STACK));
+                        SetItem(Item.Create(type, total - Item.MAX_STACK));
                     }
                     else
                     {
@@ -128,4 +145,17 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
         itemImage.transform.localPosition = Vector3.zero;
         itemCount.SetActive(true);
     }
+
+    public void Consume(int n)
+    {
+        if (n >= item.quantity)
+        {
+            SetItem(null);
+        }
+        else
+        {
+            SetItem(Item.Create(item.type, item.quantity - n));
+        }
+    }
+
 }

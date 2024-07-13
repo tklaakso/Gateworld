@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.ConstrainedExecution;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour
 {
@@ -104,6 +105,17 @@ public class Player : MonoBehaviour
             zoomVelocity = (maxZoom - zoom) / zoomEdgeSmoothing;
         }
         zoom += zoomVelocity;
+        if (Input.GetMouseButtonDown(1))
+        {
+            Item item = inventory.GetSelectedToolbarInventorySlot().GetItem();
+            if (item.quantity == 0)
+                return;
+            inventory.GetSelectedToolbarInventorySlot().GetItem().Activate(Input.mousePosition);
+            if (item.disposable)
+            {
+                inventory.GetSelectedToolbarInventorySlot().Consume(1);
+            }
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -145,4 +157,5 @@ public class Player : MonoBehaviour
             grounded = false;
         }
     }
+
 }
