@@ -46,6 +46,31 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
         {
             SetItem(Section.MAIN, i, Item.Create(i % 2 == 0 ? Item.Type.GRASS : Item.Type.STONE, i + 1));
         }
+        AddItem(Section.MAIN, Item.Create(Item.Type.PICKAXE, 1));
+    }
+
+    public bool AddItem(Section section, Item item)
+    {
+        GameObject sectionObject = GetSectionGameObject(section);
+        for (int i = 0; i < sectionObject.transform.childCount; i++)
+        {
+            InventorySlot slot = sectionObject.transform.GetChild(i).GetComponent<InventorySlot>();
+            if (slot.GetItem().type == item.type)
+            {
+                Item slotItem = slot.GetItem();
+                int amount = Mathf.Min(item.quantity, Item.MAX_STACK - slotItem.quantity);
+                item.quantity -= amount;
+                slot.SetItem(Item.Create(slotItem.type, slotItem.quantity + amount));
+                if (item.quantity == 0)
+                    return true;
+            }
+            else if (slot.GetItem().type == Item.Type.NONE)
+            {
+                slot.SetItem(item);
+                return true;
+            }
+        }
+        return false;
     }
 
     private void UpdatePlayerItemContainer()

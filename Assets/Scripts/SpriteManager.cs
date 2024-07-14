@@ -26,7 +26,7 @@ public class SpriteManager : MonoBehaviour
     private void LoadItemSprites()
     {
         idToItemSprite = new Dictionary<int, Sprite>();
-        Sprite[] items = Resources.LoadAll<Sprite>("Sprites/tiles");
+        Sprite[] items = Resources.LoadAll<Sprite>("Sprites/items");
         for (int i = 0; i < items.Length; i++)
         {
             idToItemSprite[i] = items[i];

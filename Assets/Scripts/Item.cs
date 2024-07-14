@@ -17,6 +17,7 @@ public abstract class Item
         NONE,
         GRASS,
         STONE,
+        PICKAXE,
     }
 
     public Item(Type type, int quantity = 1)
@@ -35,6 +36,8 @@ public abstract class Item
                 return new TileItem(Type.GRASS, Tile.Type.GRASS);
             case Type.STONE:
                 return new TileItem(Type.STONE, Tile.Type.STONE);
+            case Type.PICKAXE:
+                return new PickaxeItem(Type.PICKAXE);
             default:
                 return new EmptyItem();
         }
