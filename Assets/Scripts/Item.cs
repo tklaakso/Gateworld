@@ -50,6 +50,6 @@ public abstract class Item
         return item;
     }
 
-    public abstract void Activate(Vector3 mousePosition);
+    public abstract bool Activate(Vector3 mousePosition);
 
 }

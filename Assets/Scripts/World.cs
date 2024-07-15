@@ -76,12 +76,21 @@ public class World : MonoBehaviour
                 return;
             }
         }
-        RemoveTile(x, y);
+        RemoveTile(x, y, true);
     }
 
-    public static void RemoveTile(int x, int y)
+    public static bool TileExists(int x, int y)
     {
+        return instance.data.ContainsKey((x, y)) && instance.data[(x, y)] != Tile.Type.AIR;
+    }
+
+    public static bool RemoveTile(int x, int y, bool removeAir = false)
+    {
+        if (!instance.data.ContainsKey((x, y)))
+            return false;
         Tile.Type type = instance.data[(x, y)];
+        if (type == Tile.Type.AIR && !removeAir)
+            return false;
         instance.data.Remove((x, y));
         Destroy(instance.tiles[(x, y)]);
         instance.tiles.Remove((x, y));
@@ -108,22 +117,23 @@ public class World : MonoBehaviour
             if (!isolated)
             {
                 CreateTile(x, y, Tile.Type.AIR);
-                for (int i = 0; i < neighbors.Length; i++)
+            }
+            for (int i = 0; i < neighbors.Length; i++)
+            {
+                if (instance.data.ContainsKey(neighbors[i]))
                 {
-                    if (instance.data.ContainsKey(neighbors[i]) && instance.data[neighbors[i]] != Tile.Type.AIR)
-                    {
-                        instance.UpdateNeighbors(neighbors[i].Item1, neighbors[i].Item2);
-                    }
+                    instance.UpdateNeighbors(neighbors[i].Item1, neighbors[i].Item2);
                 }
-                for (int i = 0; i < cornerNeighbors.Length; i++)
+            }
+            for (int i = 0; i < cornerNeighbors.Length; i++)
+            {
+                if (instance.data.ContainsKey(cornerNeighbors[i]))
                 {
-                    if (instance.data.ContainsKey(cornerNeighbors[i]) && instance.data[cornerNeighbors[i]] != Tile.Type.AIR)
-                    {
-                        instance.UpdateNeighbors(cornerNeighbors[i].Item1, cornerNeighbors[i].Item2);
-                    }
+                    instance.UpdateNeighbors(cornerNeighbors[i].Item1, cornerNeighbors[i].Item2);
                 }
             }
         }
+        return true;
     }
 
     private void UpdateNeighbors(int x, int y)
@@ -140,7 +150,7 @@ public class World : MonoBehaviour
     {
         if (instance.tiles.ContainsKey((x, y)))
         {
-            RemoveTile(x, y);
+            RemoveTile(x, y, true);
         }
         instance.data[(x, y)] = type;
         GameObject tile = GameManager.CreateTile(x, y, type);

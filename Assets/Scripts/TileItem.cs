@@ -12,10 +12,13 @@ public class TileItem : Item
         disposable = true;
     }
 
-    public override void Activate(Vector3 mousePosition)
+    public override bool Activate(Vector3 mousePosition)
     {
         Vector3Int tilePos = World.GetTilePosition(mousePosition);
+        if (World.TileExists(tilePos.x, tilePos.y))
+            return false;
         World.CreateTile(tilePos.x, tilePos.y, tileType);
+        return true;
     }
 
 }

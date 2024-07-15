@@ -9,10 +9,10 @@ public class PickaxeItem : Item
         
     }
 
-    public override void Activate(Vector3 mousePosition)
+    public override bool Activate(Vector3 mousePosition)
     {
         Vector3Int tilePos = World.GetTilePosition(mousePosition);
-        World.RemoveTile(tilePos.x, tilePos.y);
+        return World.RemoveTile(tilePos.x, tilePos.y);
     }
 
 }

@@ -9,9 +9,9 @@ public class EmptyItem : Item
         
     }
 
-    public override void Activate(Vector3 mousePosition)
+    public override bool Activate(Vector3 mousePosition)
     {
-
+        return false;
     }
 
 }

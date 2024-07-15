@@ -110,10 +110,12 @@ public class Player : MonoBehaviour
             Item item = inventory.GetSelectedToolbarInventorySlot().GetItem();
             if (item.quantity == 0)
                 return;
-            inventory.GetSelectedToolbarInventorySlot().GetItem().Activate(Input.mousePosition);
-            if (item.disposable)
+            if (inventory.GetSelectedToolbarInventorySlot().GetItem().Activate(Input.mousePosition))
             {
-                inventory.GetSelectedToolbarInventorySlot().Consume(1);
+                if (item.disposable)
+                {
+                    inventory.GetSelectedToolbarInventorySlot().Consume(1);
+                }
             }
         }
     }
