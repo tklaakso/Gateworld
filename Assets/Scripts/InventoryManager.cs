@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
@@ -29,17 +30,14 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
     public GameObject toolbar;
     public GameObject main;
 
-    public GameObject player;
-
     private CanvasGroup overlayGroup;
     private SpriteRenderer itemContainer;
 
     private int selectedToolbarSlot = 0;
 
-    // Start is called before the first frame update
-    void Start()
+    public void Initialize()
     {
-        itemContainer = player.transform.Find("ItemContainer").GetComponent<SpriteRenderer>();
+        InitializeSlots();
         SelectToolbarSlot(selectedToolbarSlot);
         overlayGroup = overlay.GetComponent<CanvasGroup>();
         for (int i = 0; i < 20; i++)
@@ -47,6 +45,24 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
             SetItem(Section.MAIN, i, Item.Create(i % 2 == 0 ? Item.Type.GRASS : Item.Type.STONE, i + 1));
         }
         AddItem(Section.MAIN, Item.Create(Item.Type.PICKAXE, 1));
+    }
+
+    private void InitializeSlots()
+    {
+        foreach (Section section in Enum.GetValues(typeof(Section)))
+        {
+            GameObject sectionObject = GetSectionGameObject(section);
+            for (int i = 0; i < sectionObject.transform.childCount; i++)
+            {
+                InventorySlot slot = sectionObject.transform.GetChild(i).GetComponent<InventorySlot>();
+                slot.Initialize();
+            }
+        }
+    }
+
+    public void SetItemContainer(SpriteRenderer container)
+    {
+        itemContainer = container;
     }
 
     public bool AddItem(Section section, Item item)
@@ -75,6 +91,8 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
 
     private void UpdatePlayerItemContainer()
     {
+        if (itemContainer == null)
+            return;
         InventorySlot selectedSlot = toolbar.transform.GetChild(selectedToolbarSlot).GetComponent<InventorySlot>();
         if (selectedSlot.GetItem().type == Item.Type.NONE)
         {
@@ -83,7 +101,7 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
         }
         else
         {
-            itemContainer.sprite = SpriteManager.GetItemByID((int)selectedSlot.GetItem().type);
+            itemContainer.sprite = Game.SpriteManager.GetItemByID((int)selectedSlot.GetItem().type);
             itemContainer.color = Color.white;
         }
     }

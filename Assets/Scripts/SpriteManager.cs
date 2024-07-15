@@ -8,10 +8,14 @@ using UnityEngine;
 public class SpriteManager : MonoBehaviour
 {
 
-    private static SpriteManager instance;
-
     private Dictionary<int, Sprite> idToTileSprite;
     private Dictionary<int, Sprite> idToItemSprite;
+
+    public void Initialize()
+    {
+        LoadTileSprites();
+        LoadItemSprites();
+    }
 
     private void LoadTileSprites()
     {
@@ -33,31 +37,18 @@ public class SpriteManager : MonoBehaviour
         }
     }
 
-    public static Sprite GetTileByID(int id)
+    public Sprite GetTileByID(int id)
     {
-        if (instance.idToTileSprite.ContainsKey(id))
-            return instance.idToTileSprite[id];
+        if (idToTileSprite.ContainsKey(id))
+            return idToTileSprite[id];
         return null;
     }
 
-    public static Sprite GetItemByID(int id)
+    public Sprite GetItemByID(int id)
     {
-        if (instance.idToItemSprite.ContainsKey(id))
-            return instance.idToItemSprite[id];
+        if (idToItemSprite.ContainsKey(id))
+            return idToItemSprite[id];
         return null;
     }
 
-    // Start is called before the first frame update
-    void Awake()
-    {
-        instance = this;
-        LoadTileSprites();
-        LoadItemSprites();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

@@ -21,12 +21,12 @@ public class Player : MonoBehaviour
     public float zoomEdgeSmoothing;
     public float minZoom;
     public float maxZoom;
-    public GameObject mainCamera;
-    public GameObject game;
 
     private InventoryManager inventory;
+    private EntityManager entityManager;
 
     private Camera camera;
+    private GameObject mainCamera;
 
     private SpriteRenderer spriteRenderer;
     private BoxCollider2D boxCollider;
@@ -47,11 +47,15 @@ public class Player : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         boxCollider = GetComponent<BoxCollider2D>();
         rigidbody = GetComponent<Rigidbody2D>();
+        mainCamera = GameObject.Find("Main Camera");
         camera = mainCamera.GetComponent<Camera>();
-        inventory = game.GetComponent<InventoryManager>();
+        inventory = Game.InventoryManager;
+        entityManager = Game.EntityManager;
+        transform.position = entityManager.FindPlayerSpawn();
         Sprite sprite = spriteRenderer.sprite;
         transform.localScale = new Vector2(WIDTH / sprite.bounds.size.x, HEIGHT / sprite.bounds.size.y);
         boxCollider.size = new Vector2(sprite.bounds.size.x, sprite.bounds.size.y);
+        Game.InventoryManager.SetItemContainer(transform.Find("ItemContainer").GetComponent<SpriteRenderer>());
     }
 
     // Update is called once per frame

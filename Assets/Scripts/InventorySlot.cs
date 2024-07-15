@@ -19,8 +19,7 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
 
     private List<IInventorySlotUpdateListener> inventorySlotUpdateListeners;
 
-    // Start is called before the first frame update
-    void Awake()
+    public void Initialize()
     {
         inventorySlotUpdateListeners = new List<IInventorySlotUpdateListener>();
         item = Item.Create(Item.Type.NONE);
@@ -28,12 +27,6 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
         itemCount = transform.Find("ItemCount").gameObject;
         itemImage = inventoryItem.GetComponent<Image>();
         itemText = itemCount.GetComponent<TextMeshProUGUI>();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void AddInventorySlotUpdateListener(IInventorySlotUpdateListener listener)
@@ -78,7 +71,7 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
         }
         else
         {
-            itemImage.sprite = SpriteManager.GetItemByID((int)item.type);
+            itemImage.sprite = Game.SpriteManager.GetItemByID((int)item.type);
             itemImage.color = Color.white;
             if (item.quantity > 1)
             {

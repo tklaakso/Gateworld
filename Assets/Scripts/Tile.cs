@@ -17,6 +17,7 @@ public class Tile : MonoBehaviour
         AIR,
         GRASS,
         STONE,
+        DIRT,
     }
 
     private SpriteRenderer spriteRenderer;
@@ -24,7 +25,7 @@ public class Tile : MonoBehaviour
     public void Initialize()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        Sprite sprite = SpriteManager.GetTileByID((int)type);
+        Sprite sprite = Game.SpriteManager.GetTileByID((int)type);
         spriteRenderer.sprite = sprite;
         transform.localScale = new Vector2(WIDTH / sprite.bounds.size.x, HEIGHT / sprite.bounds.size.y);
     }
@@ -39,7 +40,7 @@ public class Tile : MonoBehaviour
             
             if (neighbors[i] != null)
             {
-                Sprite sprite = SpriteManager.GetTileByID((int)neighbors[i]);
+                Sprite sprite = Game.SpriteManager.GetTileByID((int)neighbors[i]);
                 Texture texture = sprite.texture;
                 neighborCoords.Add(new float[] {sprite.rect.x / texture.width,
                                                 sprite.rect.y / texture.width,
@@ -53,7 +54,7 @@ public class Tile : MonoBehaviour
                 neighborExists[i] = 0.0f;
             }
         }
-        Sprite mainSprite = SpriteManager.GetTileByID((int)type);
+        Sprite mainSprite = Game.SpriteManager.GetTileByID((int)type);
         Texture mainTexture = mainSprite.texture;
         mat.SetFloatArray("_MainCoords", new float[]
         {

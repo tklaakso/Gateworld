@@ -14,10 +14,10 @@ public class TileItem : Item
 
     public override bool Activate(Vector3 mousePosition)
     {
-        Vector3Int tilePos = World.GetTilePosition(mousePosition);
-        if (World.TileExists(tilePos.x, tilePos.y))
+        Vector3Int tilePos = Game.World.GetTilePosition(mousePosition);
+        if (Game.World.TileExists(tilePos.x, tilePos.y))
             return false;
-        World.CreateTile(tilePos.x, tilePos.y, tileType);
+        Game.World.CreateTile(tilePos.x, tilePos.y, tileType);
         return true;
     }
 

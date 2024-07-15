@@ -11,26 +11,24 @@ public class World : MonoBehaviour
     private Dictionary<(int, int), Tile.Type> data;
     private Dictionary<(int, int), GameObject> tiles;
 
+    public static Dictionary<int, int> TopLayer { get; private set; }
+
     private Tilemap tilemap;
 
     public UnityEngine.Tilemaps.Tile blankTile;
 
-    private static World instance;
+    private TerrainGenerator terrainGen;
 
-    // Start is called before the first frame update
-    void Start()
+    public void Initialize()
     {
-        instance = this;
+        TopLayer = new Dictionary<int, int>();
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
         data = new Dictionary<(int, int), Tile.Type>();
         tiles = new Dictionary<(int, int), GameObject>();
-        for (int i = -5; i < 5; i++)
+        terrainGen = new TerrainGenerator();
+        foreach (KeyValuePair<(int, int), Tile.Type> item in terrainGen.Data.ToList())
         {
-            for (int j = 0; j < 10; j++)
-            {
-                if (UnityEngine.Random.Range(0, 2) > 0)
-                    CreateTile(i, -j, UnityEngine.Random.Range(0, 2) > 0 ? Tile.Type.GRASS : Tile.Type.STONE);
-            }
+            CreateTile(item.Key.Item1, item.Key.Item2, item.Value);
         }
     }
 
@@ -79,34 +77,34 @@ public class World : MonoBehaviour
         RemoveTile(x, y, true);
     }
 
-    public static bool TileExists(int x, int y)
+    public bool TileExists(int x, int y)
     {
-        return instance.data.ContainsKey((x, y)) && instance.data[(x, y)] != Tile.Type.AIR;
+        return data.ContainsKey((x, y)) && data[(x, y)] != Tile.Type.AIR;
     }
 
-    public static bool RemoveTile(int x, int y, bool removeAir = false)
+    public bool RemoveTile(int x, int y, bool removeAir = false)
     {
-        if (!instance.data.ContainsKey((x, y)))
+        if (!data.ContainsKey((x, y)))
             return false;
-        Tile.Type type = instance.data[(x, y)];
+        Tile.Type type = data[(x, y)];
         if (type == Tile.Type.AIR && !removeAir)
             return false;
-        instance.data.Remove((x, y));
-        Destroy(instance.tiles[(x, y)]);
-        instance.tiles.Remove((x, y));
+        data.Remove((x, y));
+        Destroy(tiles[(x, y)]);
+        tiles.Remove((x, y));
         if (type != Tile.Type.AIR)
         {
-            instance.tilemap.SetTile(new Vector3Int(x, y), null);
+            tilemap.SetTile(new Vector3Int(x, y), null);
             (int, int)[] neighbors = GetNeighbors(x, y);
             (int, int)[] cornerNeighbors = GetCornerNeighbors(x, y);
             bool isolated = true;
             for (int i = 0; i < neighbors.Length; i++)
             {
-                if (instance.data.ContainsKey(neighbors[i]))
+                if (data.ContainsKey(neighbors[i]))
                 {
-                    if (instance.data[neighbors[i]] == Tile.Type.AIR)
+                    if (data[neighbors[i]] == Tile.Type.AIR)
                     {
-                        instance.RemoveIfIsolated(x, y);
+                        RemoveIfIsolated(x, y);
                     }
                     else
                     {
@@ -120,16 +118,16 @@ public class World : MonoBehaviour
             }
             for (int i = 0; i < neighbors.Length; i++)
             {
-                if (instance.data.ContainsKey(neighbors[i]))
+                if (data.ContainsKey(neighbors[i]))
                 {
-                    instance.UpdateNeighbors(neighbors[i].Item1, neighbors[i].Item2);
+                    UpdateNeighbors(neighbors[i].Item1, neighbors[i].Item2);
                 }
             }
             for (int i = 0; i < cornerNeighbors.Length; i++)
             {
-                if (instance.data.ContainsKey(cornerNeighbors[i]))
+                if (data.ContainsKey(cornerNeighbors[i]))
                 {
-                    instance.UpdateNeighbors(cornerNeighbors[i].Item1, cornerNeighbors[i].Item2);
+                    UpdateNeighbors(cornerNeighbors[i].Item1, cornerNeighbors[i].Item2);
                 }
             }
         }
@@ -146,46 +144,50 @@ public class World : MonoBehaviour
         tileScript.SetNeighbors(neighbors.Select(x => data.TryGetValue(x, out var value) && value != Tile.Type.AIR ? (Tile.Type?)value : null).ToArray());
     }
 
-    public static void CreateTile(int x, int y, Tile.Type type)
+    public void CreateTile(int x, int y, Tile.Type type)
     {
-        if (instance.tiles.ContainsKey((x, y)))
+        if (!TopLayer.ContainsKey(x))
+            TopLayer[x] = y;
+        if (TopLayer[x] < y)
+            TopLayer[x] = y;
+        if (tiles.ContainsKey((x, y)))
         {
             RemoveTile(x, y, true);
         }
-        instance.data[(x, y)] = type;
-        GameObject tile = GameManager.CreateTile(x, y, type);
-        instance.tiles[(x, y)] = tile;
+        data[(x, y)] = type;
+        GameObject tile = Game.GameManager.CreateTile(x, y, type);
+        tiles[(x, y)] = tile;
         Tile tileScript = tile.GetComponent<Tile>();
         (int, int)[] neighbors = GetNeighbors(x, y);
         (int, int)[] cornerNeighbors = GetCornerNeighbors(x, y);
         if (type != Tile.Type.AIR)
         {
-            instance.tilemap.SetTile(new Vector3Int(x, y), instance.blankTile);
+            tilemap.SetTile(new Vector3Int(x, y), blankTile);
             for (int i = 0; i < neighbors.Length; i++)
             {
-                if (!instance.tiles.ContainsKey(neighbors[i]))
+                if (!tiles.ContainsKey(neighbors[i]))
                 {
                     CreateTile(neighbors[i].Item1, neighbors[i].Item2, Tile.Type.AIR);
                 }
                 else
                 {
-                    instance.UpdateNeighbors(neighbors[i].Item1, neighbors[i].Item2);
+                    UpdateNeighbors(neighbors[i].Item1, neighbors[i].Item2);
                 }
             }
             for (int i = 0; i < cornerNeighbors.Length; i++)
             {
-                if (instance.tiles.ContainsKey(cornerNeighbors[i]))
+                if (tiles.ContainsKey(cornerNeighbors[i]))
                 {
-                    instance.UpdateNeighbors(cornerNeighbors[i].Item1, cornerNeighbors[i].Item2);
+                    UpdateNeighbors(cornerNeighbors[i].Item1, cornerNeighbors[i].Item2);
                 }
             }
         }
-        instance.UpdateNeighbors(x, y);
+        UpdateNeighbors(x, y);
     }
 
-    public static Vector3Int GetTilePosition(Vector3 mousePos)
+    public Vector3Int GetTilePosition(Vector3 mousePos)
     {
-        return instance.tilemap.WorldToCell(Camera.main.ScreenToWorldPoint(mousePos));
+        return tilemap.WorldToCell(Camera.main.ScreenToWorldPoint(mousePos));
     }
 
     // Update is called once per frame

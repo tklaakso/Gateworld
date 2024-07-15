@@ -11,8 +11,8 @@ public class PickaxeItem : Item
 
     public override bool Activate(Vector3 mousePosition)
     {
-        Vector3Int tilePos = World.GetTilePosition(mousePosition);
-        return World.RemoveTile(tilePos.x, tilePos.y);
+        Vector3Int tilePos = Game.World.GetTilePosition(mousePosition);
+        return Game.World.RemoveTile(tilePos.x, tilePos.y);
     }
 
 }
