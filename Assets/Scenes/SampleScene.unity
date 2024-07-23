@@ -4702,6 +4702,14 @@ PrefabInstance:
       propertyPath: toolbar
       value: 
       objectReference: {fileID: 1111780669}
+    - target: {fileID: 7448706245221136006, guid: 4e50d84155a6a4741a0c9c5f49c3e8d8, type: 3}
+      propertyPath: ItemEntityPrefab
+      value: 
+      objectReference: {fileID: 1123737019162904774, guid: fe78ba3e0aabb314190ea7b8af08fe1b, type: 3}
+    - target: {fileID: 7448706245221136006, guid: 4e50d84155a6a4741a0c9c5f49c3e8d8, type: 3}
+      propertyPath: TreeEntityPrefab
+      value: 
+      objectReference: {fileID: 2565003990707800886, guid: 0127dd96fb49f9f4b9d1d4425c138099, type: 3}
     - target: {fileID: 7621572175019922733, guid: 4e50d84155a6a4741a0c9c5f49c3e8d8, type: 3}
       propertyPath: m_Name
       value: Game

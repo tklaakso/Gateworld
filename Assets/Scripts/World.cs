@@ -10,6 +10,7 @@ public class World : MonoBehaviour
 
     private Dictionary<(int, int), Tile.Type> data;
     private Dictionary<(int, int), GameObject> tiles;
+    private List<GameObject> entities;
 
     public static Dictionary<int, int> TopLayer { get; private set; }
 
@@ -25,10 +26,15 @@ public class World : MonoBehaviour
         tilemap = GameObject.Find("Tilemap").GetComponent<Tilemap>();
         data = new Dictionary<(int, int), Tile.Type>();
         tiles = new Dictionary<(int, int), GameObject>();
+        entities = new List<GameObject>();
         terrainGen = new TerrainGenerator();
         foreach (KeyValuePair<(int, int), Tile.Type> item in terrainGen.Data.ToList())
         {
             CreateTile(item.Key.Item1, item.Key.Item2, item.Value);
+        }
+        foreach (((float, float), Entity.Type) item in terrainGen.Entities.ToList())
+        {
+            CreateEntity(item.Item1.Item1, item.Item1.Item2, item.Item2);
         }
     }
 
@@ -183,6 +189,13 @@ public class World : MonoBehaviour
             }
         }
         UpdateNeighbors(x, y);
+    }
+
+    public void CreateEntity(float x, float y, Entity.Type type)
+    {
+        GameObject entity = Entity.Create(type);
+        entity.transform.position = new Vector2(x, y);
+        entities.Add(entity);
     }
 
     public Vector3Int GetTilePosition(Vector3 mousePos)

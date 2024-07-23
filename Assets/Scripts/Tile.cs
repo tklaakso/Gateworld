@@ -43,9 +43,9 @@ public class Tile : MonoBehaviour
                 Sprite sprite = Game.SpriteManager.GetTileByID((int)neighbors[i]);
                 Texture texture = sprite.texture;
                 neighborCoords.Add(new float[] {sprite.rect.x / texture.width,
-                                                sprite.rect.y / texture.width,
+                                                sprite.rect.y / texture.height,
                                                 sprite.rect.width / texture.width,
-                                                sprite.rect.height / texture.width});
+                                                sprite.rect.height / texture.height});
                 neighborExists[i] = 1.0f;
             }
             else
@@ -59,9 +59,9 @@ public class Tile : MonoBehaviour
         mat.SetFloatArray("_MainCoords", new float[]
         {
             mainSprite.rect.x / mainTexture.width,
-            mainSprite.rect.y / mainTexture.width,
+            mainSprite.rect.y / mainTexture.height,
             mainSprite.rect.width / mainTexture.width,
-            mainSprite.rect.height / mainTexture.width
+            mainSprite.rect.height / mainTexture.height
         });
         mat.SetFloatArray("_LeftCoords", neighborCoords[0]);
         mat.SetFloatArray("_RightCoords", neighborCoords[1]);

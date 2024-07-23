@@ -1,30 +1,45 @@
 import os
 from PIL import Image
 
-def pack_sprites_to_spritesheet(directory):
-    for folder in os.listdir(directory):
-        folder_path = os.path.join(directory, folder)
+def create_sprite_sheet(images, output_path):
+    """
+    Create a sprite sheet from a list of images.
+    
+    Args:
+    images (list): List of PIL Image objects.
+    output_path (str): Path to save the sprite sheet.
+    """
+    if not images:
+        print("No images to process.")
+        return
+
+    total_width = sum(image.width for image in images)
+    max_height = max(image.height for image in images)
+
+    sprite_sheet = Image.new("RGBA", (total_width, max_height))
+
+    current_x = 0
+    for image in images:
+        sprite_sheet.paste(image, (current_x, 0))
+        current_x += image.width
+
+    sprite_sheet.save(output_path)
+    print(f"Sprite sheet saved to {output_path}")
+
+def process_directory(directory):
+    """
+    Process each subdirectory within the given directory to create sprite sheets.
+    
+    Args:
+    directory (str): Root directory containing subdirectories with images.
+    """
+    for folder_name in os.listdir(directory):
+        folder_path = os.path.join(directory, folder_name)
         if os.path.isdir(folder_path):
-            sprite_files = [f for f in os.listdir(folder_path) if f.endswith('.png')]
-            if not sprite_files:
-                continue
+            images = [Image.open(os.path.join(folder_path, fname)) for fname in os.listdir(folder_path) if fname.endswith(('.png', '.jpg', '.jpeg'))]
+            output_path = os.path.join(directory, f"{folder_name.lower()}.png")
+            create_sprite_sheet(images, output_path)
 
-            sprite_size = (32, 32)
-            sprites_per_row = int(len(sprite_files)**0.5) + 1
-            sheet_size = (sprites_per_row * sprite_size[0], sprites_per_row * sprite_size[1])
-            spritesheet = Image.new('RGBA', sheet_size)
-
-            for i, sprite_file in enumerate(sprite_files):
-                sprite = Image.open(os.path.join(folder_path, sprite_file))
-                row = i // sprites_per_row
-                col = i % sprites_per_row
-                position = (col * sprite_size[0], row * sprite_size[1])
-                spritesheet.paste(sprite, position)
-
-            output_path = os.path.join(directory, f'{folder.lower()}.png')
-            spritesheet.save(output_path)
-            print(f'Saved spritesheet: {output_path}')
-
-if __name__ == "__main__":
-    directory = '.'
-    pack_sprites_to_spritesheet(directory)
+if __name__ == '__main__':
+    root_directory = '.'
+    process_directory(root_directory)

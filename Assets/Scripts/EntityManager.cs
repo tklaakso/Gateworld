@@ -6,6 +6,9 @@ using System.Linq;
 public class EntityManager : MonoBehaviour
 {
 
+    public GameObject ItemEntityPrefab;
+    public GameObject TreeEntityPrefab;
+
     public void Initialize()
     {
 
@@ -17,6 +20,11 @@ public class EntityManager : MonoBehaviour
         System.Random rand = new System.Random();
         KeyValuePair<int, int> item = topLayer.ElementAt(rand.Next(0, topLayer.Count));
         return new Vector2(item.Key + Tile.WIDTH / 2.0f, item.Value + Player.HEIGHT / 2.0f);
+    }
+
+    public static Vector2 GetSpawnPoint(int x, int y)
+    {
+        return new Vector2(x + Tile.WIDTH / 2.0f, y);
     }
 
 }
