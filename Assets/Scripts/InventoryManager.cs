@@ -9,8 +9,8 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
 
     public enum Section
     {
-        TOOLBAR,
         MAIN,
+        TOOLBAR,
     }
 
     private KeyCode[] numCodes =
@@ -42,9 +42,9 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
         overlayGroup = overlay.GetComponent<CanvasGroup>();
         for (int i = 0; i < 20; i++)
         {
-            SetItem(Section.MAIN, i, Item.Create(i % 2 == 0 ? Item.Type.GRASS : Item.Type.STONE, i + 1));
+            SetItem(Section.MAIN, i, Item.Create(i % 2 == 0 ? Tile.Type.GRASS : Tile.Type.STONE, i + 1));
         }
-        AddItem(Section.MAIN, Item.Create(Item.Type.PICKAXE, 1));
+        AddItem(Item.Create(Item.Type.PICKAXE, 1));
     }
 
     private void InitializeSlots()
@@ -65,28 +65,39 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
         itemContainer = container;
     }
 
-    public bool AddItem(Section section, Item item)
+    public Item AddItem(Item item)
+    {
+        foreach (Section section in Enum.GetValues(typeof(Section)))
+        {
+            if (item.type == Item.Type.NONE)
+                break;
+            item = AddItem(item, section);
+        }
+        return item;
+    }
+
+    public Item AddItem(Item item, Section section)
     {
         GameObject sectionObject = GetSectionGameObject(section);
         for (int i = 0; i < sectionObject.transform.childCount; i++)
         {
             InventorySlot slot = sectionObject.transform.GetChild(i).GetComponent<InventorySlot>();
-            if (slot.GetItem().type == item.type)
+            if (slot.GetItem().Matches(item))
             {
                 Item slotItem = slot.GetItem();
                 int amount = Mathf.Min(item.quantity, Item.MAX_STACK - slotItem.quantity);
                 item.quantity -= amount;
-                slot.SetItem(Item.Create(slotItem.type, slotItem.quantity + amount));
+                slot.SetItem(Item.Create(slotItem, slotItem.quantity + amount));
                 if (item.quantity == 0)
-                    return true;
+                    return Item.Create(Item.Type.NONE);
             }
             else if (slot.GetItem().type == Item.Type.NONE)
             {
                 slot.SetItem(item);
-                return true;
+                return Item.Create(Item.Type.NONE);
             }
         }
-        return false;
+        return item;
     }
 
     private void UpdatePlayerItemContainer()
@@ -101,7 +112,7 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
         }
         else
         {
-            itemContainer.sprite = Game.SpriteManager.GetItemByID((int)selectedSlot.GetItem().type);
+            itemContainer.sprite = selectedSlot.GetItem().GetSprite();
             itemContainer.color = Color.white;
         }
     }

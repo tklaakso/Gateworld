@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -15,8 +16,7 @@ public abstract class Item
     public enum Type
     {
         NONE,
-        GRASS,
-        STONE,
+        TILE,
         PICKAXE,
     }
 
@@ -32,10 +32,6 @@ public abstract class Item
         {
             case Type.NONE:
                 return new EmptyItem();
-            case Type.GRASS:
-                return new TileItem(Type.GRASS, Tile.Type.GRASS);
-            case Type.STONE:
-                return new TileItem(Type.STONE, Tile.Type.STONE);
             case Type.PICKAXE:
                 return new PickaxeItem(Type.PICKAXE);
             default:
@@ -50,6 +46,37 @@ public abstract class Item
         return item;
     }
 
+    public static Item Create(Tile.Type type, int quantity = 1)
+    {
+        Item item = new TileItem(type);
+        item.quantity = quantity;
+        return item;
+    }
+
+    public static Item Create(Item item, int quantity = 1)
+    {
+        Item clone = item.Clone();
+        clone.quantity = quantity;
+        return clone;
+    }
+
     public abstract bool Activate(Vector3 mousePosition);
+
+    public virtual Item Clone()
+    {
+        Item clone = CreateSingleItem(type);
+        clone.quantity = quantity;
+        return clone;
+    }
+
+    public virtual Sprite GetSprite()
+    {
+        return Game.SpriteManager.GetItemByID((int)type);
+    }
+
+    public virtual bool Matches(Item other)
+    {
+        return type == other.type;
+    }
 
 }

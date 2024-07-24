@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 159955856210277496}
   - component: {fileID: 7462174270837371667}
   - component: {fileID: 7904577981629744834}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -193,8 +193,6 @@ MonoBehaviour:
   zoomEdgeSmoothing: 100
   minZoom: 1
   maxZoom: 30
-  mainCamera: {fileID: 0}
-  game: {fileID: 0}
   grounded: 0
 --- !u!50 &7462174270837371667
 Rigidbody2D:

@@ -88,6 +88,13 @@ public class World : MonoBehaviour
         return data.ContainsKey((x, y)) && data[(x, y)] != Tile.Type.AIR;
     }
 
+    public Tile.Type GetTile(int x, int y)
+    {
+        if (!TileExists(x, y))
+            return Tile.Type.AIR;
+        return data[(x, y)];
+    }
+
     public bool RemoveTile(int x, int y, bool removeAir = false)
     {
         if (!data.ContainsKey((x, y)))
@@ -191,11 +198,18 @@ public class World : MonoBehaviour
         UpdateNeighbors(x, y);
     }
 
-    public void CreateEntity(float x, float y, Entity.Type type)
+    public void RemoveEntity(Entity entity)
+    {
+        entities.Remove(entity.gameObject);
+        Destroy(entity.gameObject);
+    }
+
+    public GameObject CreateEntity(float x, float y, Entity.Type type)
     {
         GameObject entity = Entity.Create(type);
         entity.transform.position = new Vector2(x, y);
         entities.Add(entity);
+        return entity;
     }
 
     public Vector3Int GetTilePosition(Vector3 mousePos)

@@ -5,11 +5,23 @@ using UnityEngine;
 public class ItemEntity : Entity
 {
 
-    public float size;
+    private Item item;
 
-    public ItemEntity() : base(Entity.Type.ITEM)
+    public ItemEntity() : base(Type.ITEM)
     {
+        
+    }
 
+    public void SetItem(Item item)
+    {
+        this.item = item;
+        SetSprite(item.GetSprite());
+    }
+
+    public override void OnPlayerCollision()
+    {
+        Game.InventoryManager.AddItem(item);
+        Game.World.RemoveEntity(this);
     }
 
 }

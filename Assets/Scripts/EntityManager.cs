@@ -24,7 +24,7 @@ public class EntityManager : MonoBehaviour
 
     public static Vector2 GetSpawnPoint(int x, int y)
     {
-        return new Vector2(x + Tile.WIDTH / 2.0f, y);
+        return new Vector2(x + Tile.WIDTH / 2.0f, y + 1);
     }
 
 }

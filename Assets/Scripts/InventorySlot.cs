@@ -71,7 +71,7 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
         }
         else
         {
-            itemImage.sprite = Game.SpriteManager.GetItemByID((int)item.type);
+            itemImage.sprite = item.GetSprite();
             itemImage.color = Color.white;
             if (item.quantity > 1)
             {
@@ -110,7 +110,8 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
             InventorySlot slot = result.gameObject.GetComponent<InventorySlot>();
             if (slot && slot != this)
             {
-                Item.Type type = slot.GetItem().type;
+                Item slotItem = slot.GetItem();
+                Item.Type type = slotItem.type;
                 if (type == Item.Type.NONE)
                 {
                     slot.SetItem(item);
@@ -120,10 +121,10 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
                 else if (type == item.type)
                 {
                     int total = slot.GetItem().quantity + item.quantity;
-                    slot.SetItem(Item.Create(type, Mathf.Min(total, Item.MAX_STACK)));
+                    slot.SetItem(Item.Create(slotItem, Mathf.Min(total, Item.MAX_STACK)));
                     if (total > Item.MAX_STACK)
                     {
-                        SetItem(Item.Create(type, total - Item.MAX_STACK));
+                        SetItem(Item.Create(slotItem, total - Item.MAX_STACK));
                     }
                     else
                     {
@@ -147,7 +148,7 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
         }
         else
         {
-            SetItem(Item.Create(item.type, item.quantity - n));
+            SetItem(Item.Create(item, item.quantity - n));
         }
     }
 

@@ -140,6 +140,15 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.GetComponent<Entity>())
+        {
+            Entity entity = collision.gameObject.GetComponent<Entity>();
+            entity.OnPlayerCollision();
+        }
+    }
+
     private void OnCollisionStay2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Tilemap"))

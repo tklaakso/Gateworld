@@ -7,7 +7,7 @@ public class TreeEntity : Entity
     
     public TreeEntity() : base(Type.TREE)
     {
-
+        SetSize(2.0f, 2.0f);
     }
 
 }

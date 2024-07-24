@@ -6,7 +6,7 @@ public class TileItem : Item
 
     private Tile.Type tileType;
 
-    public TileItem(Item.Type itemType, Tile.Type tileType) : base(itemType)
+    public TileItem(Tile.Type tileType) : base(Item.Type.TILE)
     {
         this.tileType = tileType;
         disposable = true;
@@ -19,6 +19,23 @@ public class TileItem : Item
             return false;
         Game.World.CreateTile(tilePos.x, tilePos.y, tileType);
         return true;
+    }
+
+    public override Item Clone()
+    {
+        Item clone = new TileItem(tileType);
+        clone.quantity = quantity;
+        return clone;
+    }
+
+    public override Sprite GetSprite()
+    {
+        return Game.SpriteManager.GetTileByID((int)tileType);
+    }
+
+    public override bool Matches(Item other)
+    {
+        return base.Matches(other) && tileType == ((TileItem)other).tileType;
     }
 
 }
