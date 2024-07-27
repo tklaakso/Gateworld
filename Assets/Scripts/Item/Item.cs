@@ -18,6 +18,8 @@ public abstract class Item
         NONE,
         TILE,
         PICKAXE,
+        AXE,
+        WOOD,
     }
 
     public Item(Type type, int quantity = 1)
@@ -33,7 +35,11 @@ public abstract class Item
             case Type.NONE:
                 return new EmptyItem();
             case Type.PICKAXE:
-                return new PickaxeItem(Type.PICKAXE);
+                return new PickaxeItem();
+            case Type.AXE:
+                return new AxeItem();
+            case Type.WOOD:
+                return new FeaturelessItem(Type.WOOD);
             default:
                 return new EmptyItem();
         }

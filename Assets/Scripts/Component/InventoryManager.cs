@@ -44,7 +44,8 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
         {
             SetItem(Section.MAIN, i, Item.Create(i % 2 == 0 ? Tile.Type.GRASS : Tile.Type.STONE, i + 1));
         }
-        AddItem(Item.Create(Item.Type.PICKAXE, 1));
+        AddItem(Item.Create(Item.Type.PICKAXE));
+        AddItem(Item.Create(Item.Type.AXE));
     }
 
     private void InitializeSlots()

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4046190513056982590}
   - component: {fileID: 7448706245221136006}
   - component: {fileID: 3706885545591844691}
+  - component: {fileID: 3299544073849936402}
   m_Layer: 0
   m_Name: Game
   m_TagString: Untagged
@@ -90,7 +91,6 @@ MonoBehaviour:
   overlay: {fileID: 0}
   toolbar: {fileID: 0}
   main: {fileID: 0}
-  player: {fileID: 0}
 --- !u!114 &7448706245221136006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,6 +103,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b6f80e7c59605a45b14059fe919b494, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ItemEntityPrefab: {fileID: 1123737019162904774, guid: fe78ba3e0aabb314190ea7b8af08fe1b, type: 3}
+  TreeEntityPrefab: {fileID: 2565003990707800886, guid: 0127dd96fb49f9f4b9d1d4425c138099, type: 3}
 --- !u!114 &3706885545591844691
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,3 +118,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 8955826657040013327, guid: 2af546ffcbd1a3b4c98a738380361568, type: 3}
+--- !u!114 &3299544073849936402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7621572175019922733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8904ef946853c40448c22b64ad68c76d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

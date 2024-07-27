@@ -48,8 +48,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80e40896d42b85845ad54a7ee578f08f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 0.5
-  height: 0.5
+  width: 0.25
+  height: 0.25
 --- !u!212 &5012034642309773452
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -111,7 +111,7 @@ BoxCollider2D:
   m_GameObject: {fileID: 1123737019162904774}
   m_Enabled: 1
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 4f8d6dada4cacce4e87b36b8a70d4b85, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -163,7 +163,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 4f8d6dada4cacce4e87b36b8a70d4b85, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -173,7 +173,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &8591974394516024122
 BoxCollider2D:
   m_ObjectHideFlags: 0
