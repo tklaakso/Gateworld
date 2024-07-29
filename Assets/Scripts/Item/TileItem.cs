@@ -38,4 +38,9 @@ public class TileItem : Item
         return base.Matches(other) && tileType == ((TileItem)other).tileType;
     }
 
+    public override int GetID()
+    {
+        return (int)tileType;
+    }
+
 }

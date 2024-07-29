@@ -14,6 +14,7 @@ public class Game : MonoBehaviour
     public static SpriteManager SpriteManager { get; private set; }
     public static InventoryManager InventoryManager { get; private set; }
     public static EntityManager EntityManager { get; private set; }
+    public static CraftingManager CraftingManager { get; private set; }
     public static GameManager GameManager { get; private set; }
     public static Properties Properties { get; private set; }
 
@@ -24,8 +25,10 @@ public class Game : MonoBehaviour
         SpriteManager = GetComponent<SpriteManager>();
         InventoryManager = GetComponent<InventoryManager>();
         EntityManager = GetComponent<EntityManager>();
+        CraftingManager = GetComponent<CraftingManager>();
         GameManager = GetComponent<GameManager>();
         Properties = GetComponent<Properties>();
+        CraftingManager.Initialize();
         SpriteManager.Initialize();
         InventoryManager.Initialize();
         EntityManager.Initialize();

@@ -29,6 +29,7 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
     public GameObject overlay;
     public GameObject toolbar;
     public GameObject main;
+    public GameObject craftingWindow;
 
     private CanvasGroup overlayGroup;
     private SpriteRenderer itemContainer;
@@ -50,6 +51,12 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
 
     private void InitializeSlots()
     {
+        for (int i = 0; i < craftingWindow.transform.childCount; i++)
+        {
+            CraftingSlot slot = craftingWindow.transform.GetChild(i).GetComponent<CraftingSlot>();
+            slot.Initialize();
+            slot.SetItem(null);
+        }
         foreach (Section section in Enum.GetValues(typeof(Section)))
         {
             GameObject sectionObject = GetSectionGameObject(section);
@@ -57,6 +64,22 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
             {
                 InventorySlot slot = sectionObject.transform.GetChild(i).GetComponent<InventorySlot>();
                 slot.Initialize();
+            }
+        }
+    }
+
+    private void UpdateCraftingWindow()
+    {
+        List<ItemIdentifier> craftable = Game.CraftingManager.GetCraftableItems();
+        for (int i = 0; i < craftingWindow.transform.childCount; i++)
+        {
+            if (i < craftable.Count)
+            {
+                craftingWindow.transform.GetChild(i).GetComponent<CraftingSlot>().SetItem(Item.Create(craftable[i]));
+            }
+            else
+            {
+                craftingWindow.transform.GetChild(i).GetComponent<CraftingSlot>().SetItem(null);
             }
         }
     }
@@ -89,16 +112,97 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
                 int amount = Mathf.Min(item.quantity, Item.MAX_STACK - slotItem.quantity);
                 item.quantity -= amount;
                 slot.SetItem(Item.Create(slotItem, slotItem.quantity + amount));
+                UpdateCraftingWindow();
                 if (item.quantity == 0)
                     return Item.Create(Item.Type.NONE);
             }
             else if (slot.GetItem().type == Item.Type.NONE)
             {
                 slot.SetItem(item);
+                UpdateCraftingWindow();
                 return Item.Create(Item.Type.NONE);
             }
         }
+        UpdateCraftingWindow();
         return item;
+    }
+
+    public Dictionary<ItemIdentifier, int> GetAvailableItemAmounts()
+    {
+        Dictionary<ItemIdentifier, int> itemAmounts = new Dictionary<ItemIdentifier, int>();
+        foreach (Section section in Enum.GetValues(typeof(Section)))
+        {
+            GameObject sectionObject = GetSectionGameObject(section);
+            for (int i = 0; i < sectionObject.transform.childCount; i++)
+            {
+                InventorySlot slot = sectionObject.transform.GetChild(i).GetComponent<InventorySlot>();
+                Item item = slot.GetItem();
+                if (item.type == Item.Type.NONE)
+                    continue;
+                if (!itemAmounts.ContainsKey(item.Identifier))
+                    itemAmounts[item.Identifier] = 0;
+                itemAmounts[item.Identifier] += item.quantity;
+            }
+        }
+        return itemAmounts;
+    }
+
+    private void Consume(ItemIdentifier identifier, int amount)
+    {
+        foreach (Section section in Enum.GetValues(typeof(Section)))
+        {
+            GameObject sectionObject = GetSectionGameObject(section);
+            for (int i = 0; i < sectionObject.transform.childCount; i++)
+            {
+                InventorySlot slot = sectionObject.transform.GetChild(i).GetComponent<InventorySlot>();
+                Item item = slot.GetItem();
+                if (!item.Identifier.Equals(identifier))
+                    continue;
+                if (amount >= item.quantity)
+                {
+                    amount -= item.quantity;
+                    slot.SetItem(null);
+                }
+                else
+                {
+                    slot.SetItem(Item.Create(item, item.quantity - amount));
+                    amount = 0;
+                }
+                if (amount == 0)
+                    break;
+            }
+            if (amount == 0)
+                break;
+        }
+    }
+
+    public bool ConsumeItems(List<Item> items)
+    {
+        Dictionary<ItemIdentifier, int> itemAmounts = new Dictionary<ItemIdentifier, int>();
+        Dictionary<ItemIdentifier, int> availableItemAmounts = GetAvailableItemAmounts();
+        foreach (Item item in items)
+        {
+            ItemIdentifier identifier = item.Identifier;
+            if (!itemAmounts.ContainsKey(identifier))
+                itemAmounts[identifier] = 0;
+            itemAmounts[identifier] += item.quantity;
+        }
+        foreach (KeyValuePair<ItemIdentifier, int> pair in itemAmounts)
+        {
+            if (!availableItemAmounts.ContainsKey(pair.Key) || availableItemAmounts[pair.Key] < pair.Value)
+                return false;
+        }
+        foreach (KeyValuePair<ItemIdentifier, int> pair in itemAmounts)
+        {
+            Consume(pair.Key, pair.Value);
+        }
+        UpdateCraftingWindow();
+        return true;
+    }
+
+    public bool ConsumeItem(Item item)
+    {
+        return ConsumeItems(new List<Item>() { item });
     }
 
     private void UpdatePlayerItemContainer()
@@ -133,7 +237,7 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
         UpdatePlayerItemContainer();
     }
 
-    public void SetItem(Section section, int idx, Item item)
+    private void SetItem(Section section, int idx, Item item)
     {
         GameObject sectionObject = GetSectionGameObject(section);
         sectionObject.transform.GetChild(idx).GetComponent<InventorySlot>().SetItem(item);

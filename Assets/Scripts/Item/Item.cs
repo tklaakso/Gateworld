@@ -22,18 +22,27 @@ public abstract class Item
         WOOD,
     }
 
+    public ItemIdentifier Identifier {
+        get
+        {
+            return new ItemIdentifier(type, GetID());
+        }
+    }
+
     public Item(Type type, int quantity = 1)
     {
         this.type = type;
         this.quantity = quantity;
     }
 
-    private static Item CreateSingleItem(Type type)
+    private static Item CreateSingleItem(Type type, int id = 0)
     {
         switch (type)
         {
             case Type.NONE:
                 return new EmptyItem();
+            case Type.TILE:
+                return new TileItem((Tile.Type)id);
             case Type.PICKAXE:
                 return new PickaxeItem();
             case Type.AXE:
@@ -66,6 +75,13 @@ public abstract class Item
         return clone;
     }
 
+    public static Item Create(ItemIdentifier identifier, int quantity = 1)
+    {
+        Item item = CreateSingleItem(identifier.Type, identifier.Id);
+        item.quantity = quantity;
+        return item;
+    }
+
     public abstract bool Activate(Vector3 mousePosition);
 
     public virtual Item Clone()
@@ -83,6 +99,11 @@ public abstract class Item
     public virtual bool Matches(Item other)
     {
         return type == other.type;
+    }
+
+    public virtual int GetID()
+    {
+        return 0;
     }
 
 }
