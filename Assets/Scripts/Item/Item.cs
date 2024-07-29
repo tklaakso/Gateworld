@@ -7,7 +7,10 @@ using UnityEngine.EventSystems;
 public abstract class Item
 {
 
-    public static readonly int MAX_STACK = 64;
+    public int MaxStackSize
+    {
+        get; protected set;
+    } = 64;
 
     public Type type;
     public int quantity;
@@ -96,9 +99,9 @@ public abstract class Item
         return Game.SpriteManager.GetItemByID((int)type);
     }
 
-    public virtual bool Matches(Item other)
+    public bool Matches(Item other)
     {
-        return type == other.type;
+        return Identifier.Equals(other.Identifier);
     }
 
     public virtual int GetID()

@@ -6,7 +6,7 @@ public class PickaxeItem : Item
 
     public PickaxeItem() : base(Type.PICKAXE)
     {
-        
+        MaxStackSize = 1;
     }
 
     public override bool Activate(Vector3 mousePosition)

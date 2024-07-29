@@ -7,7 +7,7 @@ public class AxeItem : Item
 
     public AxeItem() : base(Type.AXE)
     {
-
+        MaxStackSize = 1;
     }
 
     public override bool Activate(Vector3 mousePosition)

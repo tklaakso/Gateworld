@@ -20,7 +20,14 @@ public class CraftingManager : MonoBehaviour
         CraftingRecipe recipe = recipes[identifier];
         if (!Game.InventoryManager.ConsumeItems(recipe.Ingredients))
             return false;
-        Game.InventoryManager.AddItem(Item.Create(identifier));
+        Item remainder = Game.InventoryManager.AddItem(Item.Create(identifier));
+        if (remainder.type != Item.Type.NONE)
+        {
+            Vector2 playerPos = Game.Player.gameObject.transform.position;
+            GameObject itemEntity = Game.World.CreateEntity(playerPos.x, playerPos.y, Entity.Type.ITEM);
+            itemEntity.GetComponent<ItemEntity>().SetItem(remainder);
+            Util.ApplyItemEntityDispersalForce(itemEntity);
+        }
         return true;
     }
 

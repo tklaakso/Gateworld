@@ -50,6 +50,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 0.25
   height: 0.25
+  PickupCooldown: 1000
 --- !u!212 &5012034642309773452
 SpriteRenderer:
   m_ObjectHideFlags: 0

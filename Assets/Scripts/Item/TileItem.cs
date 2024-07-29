@@ -33,11 +33,6 @@ public class TileItem : Item
         return Game.SpriteManager.GetTileByID((int)tileType);
     }
 
-    public override bool Matches(Item other)
-    {
-        return base.Matches(other) && tileType == ((TileItem)other).tileType;
-    }
-
     public override int GetID()
     {
         return (int)tileType;

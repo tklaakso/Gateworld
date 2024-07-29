@@ -109,7 +109,7 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
             if (slot.GetItem().Matches(item))
             {
                 Item slotItem = slot.GetItem();
-                int amount = Mathf.Min(item.quantity, Item.MAX_STACK - slotItem.quantity);
+                int amount = Mathf.Min(item.quantity, item.MaxStackSize - slotItem.quantity);
                 item.quantity -= amount;
                 slot.SetItem(Item.Create(slotItem, slotItem.quantity + amount));
                 UpdateCraftingWindow();

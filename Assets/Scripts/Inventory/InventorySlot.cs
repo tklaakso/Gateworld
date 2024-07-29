@@ -105,9 +105,12 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
             return;
         List<RaycastResult> results = new List<RaycastResult>();
         EventSystem.current.RaycastAll(eventData, results);
+        bool intersectsSlot = false;
         foreach (RaycastResult result in results)
         {
             InventorySlot slot = result.gameObject.GetComponent<InventorySlot>();
+            if (slot)
+                intersectsSlot = true;
             if (slot && slot != this)
             {
                 Item slotItem = slot.GetItem();
@@ -118,13 +121,13 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
                     SetItem(null);
                     break;
                 }
-                else if (type == item.type)
+                else if (slotItem.Matches(item))
                 {
                     int total = slot.GetItem().quantity + item.quantity;
-                    slot.SetItem(Item.Create(slotItem, Mathf.Min(total, Item.MAX_STACK)));
-                    if (total > Item.MAX_STACK)
+                    slot.SetItem(Item.Create(slotItem, Mathf.Min(total, slotItem.MaxStackSize)));
+                    if (total > slotItem.MaxStackSize)
                     {
-                        SetItem(Item.Create(slotItem, total - Item.MAX_STACK));
+                        SetItem(Item.Create(slotItem, total - slotItem.MaxStackSize));
                     }
                     else
                     {
@@ -132,7 +135,23 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
                     }
                     break;
                 }
+                else
+                {
+                    Item temp = slot.GetItem();
+                    slot.SetItem(item);
+                    SetItem(temp);
+                }
             }
+        }
+        if (!intersectsSlot)
+        {
+            Vector2 playerPos = Game.Player.transform.position;
+            GameObject itemEntity = Game.World.CreateEntity(playerPos.x, playerPos.y, Entity.Type.ITEM);
+            ItemEntity itemEntityScript = itemEntity.GetComponent<ItemEntity>();
+            itemEntityScript.ActivateCooldown();
+            itemEntityScript.SetItem(item);
+            Util.ApplyItemEntityDispersalForce(itemEntity);
+            SetItem(null);
         }
         inventoryItem.transform.SetParent(transform);
         inventoryItem.transform.SetAsFirstSibling();
