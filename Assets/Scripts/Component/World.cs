@@ -204,9 +204,9 @@ public class World : MonoBehaviour
         Destroy(entity.gameObject);
     }
 
-    public GameObject CreateEntity(float x, float y, Entity.Type type)
+    public GameObject CreateEntity(float x, float y, Entity.Type type, int id = 0)
     {
-        GameObject entity = Entity.Create(type);
+        GameObject entity = Entity.Create(type, id);
         entity.transform.position = new Vector2(x, y);
         entities.Add(entity);
         return entity;

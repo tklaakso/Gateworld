@@ -6,7 +6,22 @@ using UnityEngine;
 public class ItemEntity : Entity
 {
 
-    private Item item;
+    private Item _item;
+
+    public Item item
+    {
+        get
+        {
+            return _item;
+        }
+
+        set
+        {
+            _item = value;
+            UpdateSprite();
+        }
+    }
+
     private long cooldownStartTime = 0;
 
     public int PickupCooldown;
@@ -21,10 +36,11 @@ public class ItemEntity : Entity
         cooldownStartTime = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
     }
 
-    public void SetItem(Item item)
+    public override Sprite GetSprite()
     {
-        this.item = item;
-        SetSprite(item.GetSprite());
+        if (item == null)
+            return null;
+        return item.GetSprite();
     }
 
     public override void OnPlayerCollision()

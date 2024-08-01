@@ -5,9 +5,6 @@ public class SpriteImportSettings : AssetPostprocessor
 {
     void OnPreprocessTexture()
     {
-        if (assetPath.ToLower().Contains("entities"))
-            return;
-
         TextureImporter textureImporter = (TextureImporter)assetImporter;
 
         // Check if the texture is a sprite
@@ -25,7 +22,7 @@ public class SpriteImportSettings : AssetPostprocessor
 
     void OnPostprocessTexture(Texture2D texture)
     {
-        if (assetPath.ToLower().Contains("entities"))
+        if (assetPath.ToLower().Contains("entities") || assetPath.ToLower().Contains("build"))
             return;
 
         TextureImporter textureImporter = (TextureImporter)assetImporter;

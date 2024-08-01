@@ -28,8 +28,8 @@ public class Game : MonoBehaviour
         CraftingManager = GetComponent<CraftingManager>();
         GameManager = GetComponent<GameManager>();
         Properties = GetComponent<Properties>();
-        CraftingManager.Initialize();
         SpriteManager.Initialize();
+        CraftingManager.Initialize();
         InventoryManager.Initialize();
         EntityManager.Initialize();
         GameManager.Initialize();

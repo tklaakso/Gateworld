@@ -6,29 +6,45 @@ using UnityEngine.U2D;
 public abstract class Entity : MonoBehaviour
 {
 
-    protected Type type;
+    private Type _type;
+
+    public Type type {
+        get
+        {
+            return _type;
+        }
+
+        set
+        {
+            _type = value;
+            UpdateSprite();
+        }
+    }
 
     public float width = 1.0f, height = 1.0f;
 
-    private Sprite sprite = null;
-
     public enum Type
     {
+        BUILD,
         ITEM,
         TREE,
     }
 
     public Entity(Type type)
     {
-        this.type = type;
+        _type = type;
+    }
+
+    protected void UpdateSprite()
+    {
+        Sprite sprite = GetSprite();
+        GetComponent<SpriteRenderer>().sprite = sprite;
+        transform.localScale = new Vector2(width / sprite.bounds.size.x, height / sprite.bounds.size.y);
     }
 
     void Start()
     {
-        if (sprite == null)
-            sprite = Game.SpriteManager.GetEntityByID((int)type);
-        GetComponent<SpriteRenderer>().sprite = sprite;
-        transform.localScale = new Vector2(width / sprite.bounds.size.x, height / sprite.bounds.size.y);
+        UpdateSprite();
     }
 
     protected void SetSize(float width, float height)
@@ -37,12 +53,12 @@ public abstract class Entity : MonoBehaviour
         this.height = height;
     }
 
-    protected void SetSprite(Sprite sprite)
+    public virtual Sprite GetSprite()
     {
-        this.sprite = sprite;
+        return Game.SpriteManager.GetEntityByID((int)type);
     }
 
-    public static GameObject Create(Type type)
+    public static GameObject Create(Type type, int id = 0)
     {
         switch (type)
         {
@@ -50,6 +66,8 @@ public abstract class Entity : MonoBehaviour
                 return Instantiate(Game.EntityManager.ItemEntityPrefab);
             case Type.TREE:
                 return Instantiate(Game.EntityManager.TreeEntityPrefab);
+            case Type.BUILD:
+                return BuildEntity.Create((BuildEntity.Type)id);
             default:
                 return null;
         }

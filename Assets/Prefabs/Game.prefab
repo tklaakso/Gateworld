@@ -107,6 +107,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ItemEntityPrefab: {fileID: 1123737019162904774, guid: fe78ba3e0aabb314190ea7b8af08fe1b, type: 3}
   TreeEntityPrefab: {fileID: 2565003990707800886, guid: 0127dd96fb49f9f4b9d1d4425c138099, type: 3}
+  FloorBuildEntityPrefab: {fileID: 666780000879947538, guid: c6a62374a58a4694cbb8b21c9c50e1de, type: 3}
+  WallBuildEntityPrefab: {fileID: 2254957553248016326, guid: 519b722251b2dbc40893f11dd179c4cc, type: 3}
+  CeilingBuildEntityPrefab: {fileID: 2568657103153547404, guid: 98494c2ac807b32469a52869b057b731, type: 3}
 --- !u!114 &3706885545591844691
 MonoBehaviour:
   m_ObjectHideFlags: 0

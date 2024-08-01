@@ -16,7 +16,7 @@ public class PickaxeItem : Item
         if (Game.World.RemoveTile(tilePos.x, tilePos.y))
         {
             GameObject entity = Game.World.CreateEntity(tilePos.x + Tile.WIDTH / 2.0f - Game.EntityManager.ItemEntityPrefab.GetComponent<ItemEntity>().width / 2.0f, tilePos.y + Tile.HEIGHT / 2.0f - Game.EntityManager.ItemEntityPrefab.GetComponent<ItemEntity>().height / 2.0f, Entity.Type.ITEM);
-            entity.GetComponent<ItemEntity>().SetItem(Create(tileType));
+            entity.GetComponent<ItemEntity>().item = Create(tileType);
             Util.ApplyItemEntityDispersalForce(entity);
             return true;
         }

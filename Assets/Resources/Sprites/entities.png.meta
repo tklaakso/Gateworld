@@ -48,7 +48,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 32
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -69,7 +69,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 2048
+    maxTextureSize: 1024
     resizeAlgorithm: 0
     textureFormat: -1
     textureCompression: 0
@@ -110,6 +110,27 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
+      name: entities_0
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 73
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0a15365ea469a31468e082c14daf02e7
+      internalID: 1553766464
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
       name: entities_1
       rect:
         serializedVersion: 2
@@ -117,15 +138,15 @@ TextureImporter:
         y: 73
         width: 32
         height: 32
-      alignment: 7
-      pivot: {x: 0.5, y: 0}
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2817099dcf02ccf4384b5bac872ca7bb
-      internalID: 40576561
+      spriteID: 16355e4e60f55bf48b684a7a25a85b53
+      internalID: -266276423
       vertices: []
       indices: 
       edges: []
@@ -134,7 +155,7 @@ TextureImporter:
       name: entities_2
       rect:
         serializedVersion: 2
-        x: 32
+        x: 64
         y: 0
         width: 113
         height: 105
@@ -145,8 +166,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 51085f1bde66598489b042858a031280
-      internalID: 315029868
+      spriteID: db937f39785cbf04daf5a54396f99ce0
+      internalID: -2125980858
       vertices: []
       indices: 
       edges: []
@@ -154,7 +175,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 335c299bc610a0a469ab22b25330b7c8
     internalID: 0
     vertices: []
     indices: 
@@ -162,9 +183,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      entities_0: 115862628
-      entities_1: 40576561
-      entities_2: 315029868
+      entities_0: 1553766464
+      entities_1: -266276423
+      entities_2: -2125980858
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

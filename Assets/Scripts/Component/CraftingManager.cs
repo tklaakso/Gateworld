@@ -11,6 +11,7 @@ public class CraftingManager : MonoBehaviour
     {
         recipes = new Dictionary<ItemIdentifier, CraftingRecipe>();
         recipes[new ItemIdentifier(Item.Type.PICKAXE, 0)] = new CraftingRecipe(new ItemIdentifier(Item.Type.PICKAXE, 0), new List<Item> { Item.Create(Tile.Type.STONE, 3), Item.Create(Item.Type.WOOD, 2) });
+        recipes[new ItemIdentifier(Item.Type.HAMMER, 0)] = new CraftingRecipe(new ItemIdentifier(Item.Type.HAMMER, 0), new List<Item> { Item.Create(Tile.Type.STONE, 4), Item.Create(Item.Type.WOOD, 4) });
     }
 
     public bool CraftSingleItem(ItemIdentifier identifier)
@@ -25,7 +26,7 @@ public class CraftingManager : MonoBehaviour
         {
             Vector2 playerPos = Game.Player.gameObject.transform.position;
             GameObject itemEntity = Game.World.CreateEntity(playerPos.x, playerPos.y, Entity.Type.ITEM);
-            itemEntity.GetComponent<ItemEntity>().SetItem(remainder);
+            itemEntity.GetComponent<ItemEntity>().item = remainder;
             Util.ApplyItemEntityDispersalForce(itemEntity);
         }
         return true;

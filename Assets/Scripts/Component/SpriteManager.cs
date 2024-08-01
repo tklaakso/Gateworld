@@ -11,12 +11,14 @@ public class SpriteManager : MonoBehaviour
     private Dictionary<int, Sprite> idToTileSprite;
     private Dictionary<int, Sprite> idToItemSprite;
     private Dictionary<int, Sprite> idToEntitySprite;
+    private Dictionary<int, Sprite> idToBuildSprite;
 
     public void Initialize()
     {
         LoadTileSprites();
         LoadItemSprites();
         LoadEntitySprites();
+        LoadBuildSprites();
     }
 
     private void LoadTileSprites()
@@ -49,6 +51,16 @@ public class SpriteManager : MonoBehaviour
         }
     }
 
+    private void LoadBuildSprites()
+    {
+        idToBuildSprite = new Dictionary<int, Sprite>();
+        Sprite[] items = Resources.LoadAll<Sprite>("Sprites/build");
+        for (int i = 0; i < items.Length; i++)
+        {
+            idToBuildSprite[i] = items[i];
+        }
+    }
+
     public Sprite GetTileByID(int id)
     {
         if (idToTileSprite.ContainsKey(id))
@@ -67,6 +79,13 @@ public class SpriteManager : MonoBehaviour
     {
         if (idToEntitySprite.ContainsKey(id))
             return idToEntitySprite[id];
+        return null;
+    }
+
+    public Sprite GetBuildByID(int id)
+    {
+        if (idToBuildSprite.ContainsKey(id))
+            return idToBuildSprite[id];
         return null;
     }
 

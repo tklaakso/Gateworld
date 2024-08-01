@@ -8,6 +8,9 @@ public class EntityManager : MonoBehaviour
 
     public GameObject ItemEntityPrefab;
     public GameObject TreeEntityPrefab;
+    public GameObject FloorBuildEntityPrefab;
+    public GameObject WallBuildEntityPrefab;
+    public GameObject CeilingBuildEntityPrefab;
 
     public void Initialize()
     {

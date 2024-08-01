@@ -23,6 +23,7 @@ public abstract class Item
         PICKAXE,
         AXE,
         WOOD,
+        HAMMER,
     }
 
     public ItemIdentifier Identifier {
@@ -52,6 +53,8 @@ public abstract class Item
                 return new AxeItem();
             case Type.WOOD:
                 return new FeaturelessItem(Type.WOOD);
+            case Type.HAMMER:
+                return new HammerItem();
             default:
                 return new EmptyItem();
         }

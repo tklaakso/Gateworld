@@ -21,7 +21,7 @@ public class AxeItem : Item
                 Vector2 treePos = entity.transform.position;
                 Game.World.RemoveEntity(entity);
                 GameObject itemEntity = Game.World.CreateEntity(treePos.x, treePos.y, Entity.Type.ITEM);
-                itemEntity.GetComponent<ItemEntity>().SetItem(Create(Type.WOOD, 8));
+                itemEntity.GetComponent<ItemEntity>().item = Create(Type.WOOD, 8);
                 Util.ApplyItemEntityDispersalForce(itemEntity);
                 return true;
             }

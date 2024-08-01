@@ -149,7 +149,7 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
             GameObject itemEntity = Game.World.CreateEntity(playerPos.x, playerPos.y, Entity.Type.ITEM);
             ItemEntity itemEntityScript = itemEntity.GetComponent<ItemEntity>();
             itemEntityScript.ActivateCooldown();
-            itemEntityScript.SetItem(item);
+            itemEntityScript.item = item;
             Util.ApplyItemEntityDispersalForce(itemEntity);
             SetItem(null);
         }
