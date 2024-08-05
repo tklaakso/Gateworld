@@ -46,6 +46,7 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
 
     public void SetItem(Item item)
     {
+        Item oldItem = this.item;
         if (item == null)
         {
             this.item = Item.Create(Item.Type.NONE);
@@ -57,7 +58,7 @@ public class InventorySlot : MonoBehaviour, IDragHandler, IPointerDownHandler, I
         UpdateItemImage();
         foreach (var listener in inventorySlotUpdateListeners)
         {
-            listener.OnInventorySlotUpdate(this);
+            listener.OnInventorySlotUpdate(this, oldItem, this.item);
         }
     }
 

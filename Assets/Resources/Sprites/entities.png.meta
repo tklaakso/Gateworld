@@ -110,7 +110,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: entities_0
+      name: entities_1
       rect:
         serializedVersion: 2
         x: 32
@@ -131,7 +131,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: entities_1
+      name: entities_0
       rect:
         serializedVersion: 2
         x: 0
@@ -152,10 +152,10 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: entities_2
+      name: entities_3
       rect:
         serializedVersion: 2
-        x: 64
+        x: 96
         y: 0
         width: 113
         height: 105
@@ -172,6 +172,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: entities_2
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 73
+        width: 32
+        height: 32
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e7ab88a1eb1f3b54cb0effd16f2c7b25
+      internalID: 303063426
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -183,9 +204,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      entities_0: 1553766464
-      entities_1: -266276423
-      entities_2: -2125980858
+      entities_0: -266276423
+      entities_1: 1553766464
+      entities_2: 303063426
+      entities_3: -2125980858
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

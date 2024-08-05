@@ -90,6 +90,10 @@ public abstract class Item
 
     public abstract bool Activate(Vector3 mousePosition);
 
+    public virtual void OnSelected(Vector3 mousePosition) { }
+    public virtual void OnDeselected(Vector3 mousePosition) { }
+    public virtual void SelectedUpdate(Vector3 mousePosition) { }
+
     public virtual Item Clone()
     {
         Item clone = CreateSingleItem(type);

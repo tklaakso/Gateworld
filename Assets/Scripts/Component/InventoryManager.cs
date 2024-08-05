@@ -224,16 +224,36 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
 
     public void SelectToolbarSlot(int slot)
     {
-        toolbar.transform.GetChild(selectedToolbarSlot).GetComponent<UnityEngine.UI.Image>().color = Color.white;
-        toolbar.transform.GetChild(selectedToolbarSlot).GetComponent<InventorySlot>().RemoveInventorySlotUpdateListener(this);
-        toolbar.transform.GetChild(slot % toolbar.transform.childCount).GetComponent<UnityEngine.UI.Image>().color = new Color(0.75f, 0.75f, 0.75f);
-        toolbar.transform.GetChild(slot % toolbar.transform.childCount).GetComponent<InventorySlot>().AddInventorySlotUpdateListener(this);
+        Transform prevSlot = toolbar.transform.GetChild(selectedToolbarSlot);
+        InventorySlot prevInventorySlot = prevSlot.GetComponent<InventorySlot>();
+        Transform nextSlot = toolbar.transform.GetChild(slot % toolbar.transform.childCount);
+        InventorySlot nextInventorySlot = nextSlot.GetComponent<InventorySlot>();
+        prevSlot.GetComponent<UnityEngine.UI.Image>().color = Color.white;
+        prevInventorySlot.RemoveInventorySlotUpdateListener(this);
+        if (prevInventorySlot.GetItem().type != Item.Type.NONE)
+        {
+            prevInventorySlot.GetItem().OnDeselected(Input.mousePosition);
+        }
+        nextSlot.GetComponent<UnityEngine.UI.Image>().color = new Color(0.75f, 0.75f, 0.75f);
+        nextInventorySlot.AddInventorySlotUpdateListener(this);
+        if (nextInventorySlot.GetItem().type != Item.Type.NONE)
+        {
+            nextInventorySlot.GetItem().OnSelected(Input.mousePosition);
+        }
         selectedToolbarSlot = slot % toolbar.transform.childCount;
         UpdatePlayerItemContainer();
     }
 
-    public void OnInventorySlotUpdate(InventorySlot inventorySlot)
+    public void OnInventorySlotUpdate(InventorySlot inventorySlot, Item oldItem, Item newItem)
     {
+        if (oldItem.type != Item.Type.NONE)
+        {
+            oldItem.OnDeselected(Input.mousePosition);
+        }
+        if (newItem.type != Item.Type.NONE)
+        {
+            newItem.OnSelected(Input.mousePosition);
+        }
         UpdatePlayerItemContainer();
     }
 
@@ -284,6 +304,12 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
         if (Input.GetKeyDown(KeyCode.E))
         {
             ToggleInventoryOpen();
+        }
+        Transform activeSlot = toolbar.transform.GetChild(selectedToolbarSlot);
+        InventorySlot activeInventorySlot = activeSlot.GetComponent<InventorySlot>();
+        if (activeInventorySlot.GetItem().type != Item.Type.NONE)
+        {
+            activeInventorySlot.GetItem().SelectedUpdate(Input.mousePosition);
         }
         for (int i = 0; i < numCodes.Length; i++)
         {

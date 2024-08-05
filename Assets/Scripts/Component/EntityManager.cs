@@ -11,6 +11,7 @@ public class EntityManager : MonoBehaviour
     public GameObject FloorBuildEntityPrefab;
     public GameObject WallBuildEntityPrefab;
     public GameObject CeilingBuildEntityPrefab;
+    public GameObject BuildEntityGhostPrefab;
 
     public void Initialize()
     {

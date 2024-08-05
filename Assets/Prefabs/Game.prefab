@@ -110,6 +110,7 @@ MonoBehaviour:
   FloorBuildEntityPrefab: {fileID: 666780000879947538, guid: c6a62374a58a4694cbb8b21c9c50e1de, type: 3}
   WallBuildEntityPrefab: {fileID: 2254957553248016326, guid: 519b722251b2dbc40893f11dd179c4cc, type: 3}
   CeilingBuildEntityPrefab: {fileID: 2568657103153547404, guid: 98494c2ac807b32469a52869b057b731, type: 3}
+  BuildEntityGhostPrefab: {fileID: 1737097767316934813, guid: fd4a262119c7bf744ae69209d6229668, type: 3}
 --- !u!114 &3706885545591844691
 MonoBehaviour:
   m_ObjectHideFlags: 0

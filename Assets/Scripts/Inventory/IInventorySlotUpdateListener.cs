@@ -1,4 +1,4 @@
 public interface IInventorySlotUpdateListener
 {
-    public void OnInventorySlotUpdate(InventorySlot slot);
+    public void OnInventorySlotUpdate(InventorySlot slot, Item oldItem, Item newItem);
 }

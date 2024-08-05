@@ -126,7 +126,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Tilemap"))
+        if (collision.gameObject.CompareTag("Tilemap") || collision.gameObject.CompareTag("Build"))
         {
             grounded = false;
             foreach (ContactPoint2D contact in collision.contacts)
@@ -151,7 +151,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Tilemap"))
+        if (collision.gameObject.CompareTag("Tilemap") || collision.gameObject.CompareTag("Build"))
         {
             grounded = false;
             foreach (ContactPoint2D contact in collision.contacts)
@@ -167,7 +167,7 @@ public class Player : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Tilemap"))
+        if (collision.gameObject.CompareTag("Tilemap") || collision.gameObject.CompareTag("Build"))
         {
             grounded = false;
         }

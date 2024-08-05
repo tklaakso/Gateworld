@@ -26,6 +26,7 @@ public abstract class Entity : MonoBehaviour
     public enum Type
     {
         BUILD,
+        BUILD_GHOST,
         ITEM,
         TREE,
     }
@@ -68,6 +69,8 @@ public abstract class Entity : MonoBehaviour
                 return Instantiate(Game.EntityManager.TreeEntityPrefab);
             case Type.BUILD:
                 return BuildEntity.Create((BuildEntity.Type)id);
+            case Type.BUILD_GHOST:
+                return Instantiate(Game.EntityManager.BuildEntityGhostPrefab);
             default:
                 return null;
         }
