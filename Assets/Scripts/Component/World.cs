@@ -12,6 +12,8 @@ public class World : MonoBehaviour
     private Dictionary<(int, int), GameObject> tiles;
     private List<GameObject> entities;
 
+    public GameObject tilePrefab;
+
     public static Dictionary<int, int> TopLayer { get; private set; }
 
     private Tilemap tilemap;
@@ -168,9 +170,11 @@ public class World : MonoBehaviour
             RemoveTile(x, y, true);
         }
         data[(x, y)] = type;
-        GameObject tile = Game.GameManager.CreateTile(x, y, type);
-        tiles[(x, y)] = tile;
+        GameObject tile = Instantiate(tilePrefab, new Vector2(x * Tile.WIDTH, y * Tile.HEIGHT), Quaternion.identity);
         Tile tileScript = tile.GetComponent<Tile>();
+        tileScript.type = type;
+        tileScript.Initialize();
+        tiles[(x, y)] = tile;
         (int, int)[] neighbors = GetNeighbors(x, y);
         (int, int)[] cornerNeighbors = GetCornerNeighbors(x, y);
         if (type != Tile.Type.AIR)

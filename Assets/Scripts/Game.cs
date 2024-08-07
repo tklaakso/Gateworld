@@ -15,7 +15,7 @@ public class Game : MonoBehaviour
     public static InventoryManager InventoryManager { get; private set; }
     public static EntityManager EntityManager { get; private set; }
     public static CraftingManager CraftingManager { get; private set; }
-    public static GameManager GameManager { get; private set; }
+    public static BuildManager BuildManager { get; private set; }
     public static Properties Properties { get; private set; }
 
     void Awake()
@@ -26,13 +26,13 @@ public class Game : MonoBehaviour
         InventoryManager = GetComponent<InventoryManager>();
         EntityManager = GetComponent<EntityManager>();
         CraftingManager = GetComponent<CraftingManager>();
-        GameManager = GetComponent<GameManager>();
+        BuildManager = GetComponent<BuildManager>();
         Properties = GetComponent<Properties>();
         SpriteManager.Initialize();
         CraftingManager.Initialize();
         InventoryManager.Initialize();
         EntityManager.Initialize();
-        GameManager.Initialize();
+        BuildManager.Initialize();
         World.Initialize();
         Properties.Initialize();
         Player = Instantiate(playerPrefab, EntityManager.FindPlayerSpawn(), Quaternion.identity).GetComponent<Player>();
