@@ -27,11 +27,13 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
     };
 
     public GameObject overlay;
+    public GameObject hammerOverlay;
     public GameObject toolbar;
     public GameObject main;
     public GameObject craftingWindow;
 
     private CanvasGroup overlayGroup;
+    private CanvasGroup hammerOverlayGroup;
     private SpriteRenderer itemContainer;
 
     private int selectedToolbarSlot = 0;
@@ -41,6 +43,7 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
         InitializeSlots();
         SelectToolbarSlot(selectedToolbarSlot);
         overlayGroup = overlay.GetComponent<CanvasGroup>();
+        hammerOverlayGroup = hammerOverlay.GetComponent<CanvasGroup>();
         for (int i = 0; i < 20; i++)
         {
             SetItem(Section.MAIN, i, Item.Create(i % 2 == 0 ? Tile.Type.GRASS : Tile.Type.STONE, i + 1));
@@ -51,6 +54,12 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
 
     private void InitializeSlots()
     {
+        Transform hammerBuildTypeSelector = hammerOverlay.transform.Find("BuildTypeSelector");
+        for (int i = 0; i < hammerBuildTypeSelector.childCount; i++)
+        {
+            SelectionSlot slot = hammerBuildTypeSelector.GetChild(i).GetComponent<SelectionSlot>();
+            slot.Initialize();
+        }
         for (int i = 0; i < craftingWindow.transform.childCount; i++)
         {
             CraftingSlot slot = craftingWindow.transform.GetChild(i).GetComponent<CraftingSlot>();
@@ -281,6 +290,22 @@ public class InventoryManager : MonoBehaviour, IInventorySlotUpdateListener
         overlayGroup.interactable = open;
         overlayGroup.blocksRaycasts = open;
         overlayGroup.alpha = open ? 1 : 0;
+    }
+
+    public void SetHammerOverlayOpen(bool open)
+    {
+        hammerOverlayGroup.interactable = open;
+        hammerOverlayGroup.blocksRaycasts = open;
+        hammerOverlayGroup.alpha = open ? 1 : 0;
+    }
+
+    public void SetHammerOverlayListener(ISlotSelectListener listener)
+    {
+        Transform buildTypeSelector = hammerOverlay.transform.Find("BuildTypeSelector");
+        for (int i = 0; i < buildTypeSelector.childCount; i++)
+        {
+            buildTypeSelector.GetChild(i).gameObject.GetComponent<SelectionSlot>().SetListener(listener);
+        }
     }
 
     public void ToggleInventoryOpen()

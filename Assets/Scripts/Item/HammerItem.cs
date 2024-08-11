@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class HammerItem : Item
+public class HammerItem : Item, ISlotSelectListener
 {
 
     private GameObject ghostBuildEntity;
@@ -16,7 +18,26 @@ public class HammerItem : Item
     public override void OnSelected(Vector3 mousePosition)
     {
         Vector2 worldPos = Camera.main.ScreenToWorldPoint(mousePosition);
-        ghostBuildEntity = Game.World.CreateEntity(worldPos.x, worldPos.y, Entity.Type.BUILD_GHOST);
+        UpdateGhostBuildEntity(worldPos);
+        GameObject hammerOverlay = Game.InventoryManager.hammerOverlay;
+        Transform buildTypeSelector = hammerOverlay.transform.Find("BuildTypeSelector");
+        int numBuildTypes = Enum.GetValues(typeof(BuildEntity.Type)).Length;
+        for (int i = 0; i < numBuildTypes; i++)
+        {
+            SelectionSlot slot = buildTypeSelector.GetChild(i).GetComponent<SelectionSlot>();
+            slot.SetSelectionID(i);
+            slot.SetSprite(Game.SpriteManager.GetBuildByID(i));
+        }
+        Game.InventoryManager.SetHammerOverlayListener(this);
+    }
+
+    private void UpdateGhostBuildEntity(Vector3 pos)
+    {
+        if (ghostBuildEntity != null)
+        {
+            Game.Destroy(ghostBuildEntity);
+        }
+        ghostBuildEntity = Game.World.CreateEntity(pos.x, pos.y, Entity.Type.BUILD_GHOST);
         ghostBuildEntity.GetComponent<BuildEntityGhost>().buildType = buildType;
     }
 
@@ -24,6 +45,7 @@ public class HammerItem : Item
     {
         Game.World.RemoveEntity(ghostBuildEntity.GetComponent<Entity>());
         ghostBuildEntity = null;
+        Game.InventoryManager.SetHammerOverlayListener(null);
     }
 
     public override void SelectedUpdate(Vector3 mousePosition)
@@ -31,6 +53,10 @@ public class HammerItem : Item
         Vector2 worldPos = Camera.main.ScreenToWorldPoint(mousePosition);
         Vector2 buildPos = GetBuildPosition(worldPos);
         ghostBuildEntity.transform.position = buildPos;
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            Game.InventoryManager.SetHammerOverlayOpen(true);
+        }
     }
 
     private Vector2 GetBuildPosition(Vector2 worldPos)
@@ -62,16 +88,37 @@ public class HammerItem : Item
             case BuildEntity.Type.WOOD_FLOOR:
             case BuildEntity.Type.STONE_FLOOR:
                 return new Vector2(closest.transform.position.x + side.x * closestEntity.width, closest.transform.position.y + side.y * closestEntity.height);
+            case BuildEntity.Type.WOOD_WALL:
+            case BuildEntity.Type.STONE_WALL:
+                if (closestEntity is FloorBuildEntity)
+                {
+                    if (worldPos.x < closest.transform.position.x)
+                    {
+                        return new Vector2(closest.transform.position.x - closestEntity.width / 2, closest.transform.position.y + closestEntity.height);
+                    }
+                    else
+                    {
+                        return new Vector2(closest.transform.position.x + closestEntity.width / 2, closest.transform.position.y + closestEntity.height);
+                    }
+                }
+                return worldPos;
             default:
                 return worldPos;
         }
+    }
+
+    public void OnSlotSelected(int id)
+    {
+        Game.InventoryManager.SetHammerOverlayOpen(false);
+        buildType = (BuildEntity.Type)id;
+        UpdateGhostBuildEntity(Camera.main.ScreenToWorldPoint(Input.mousePosition));
     }
 
     public override bool Activate(Vector3 mousePosition)
     {
         Vector2 worldPos = Camera.main.ScreenToWorldPoint(mousePosition);
         Vector2 buildPos = GetBuildPosition(worldPos);
-        Game.BuildManager.CreateBuild(buildPos.x, buildPos.y, BuildEntity.Type.WOOD_FLOOR);
+        Game.BuildManager.CreateBuild(buildPos.x, buildPos.y, buildType);
         return true;
     }
 
